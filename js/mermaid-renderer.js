@@ -40,6 +40,16 @@ class MermaidRenderer {
             return;
         }
         
+        // Unescape HTML entities in mermaid blocks for rendering
+        mermaidContainers.forEach(container => {
+            const mermaidDiv = container.querySelector('.mermaid');
+            if (mermaidDiv) {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = mermaidDiv.textContent;
+                mermaidDiv.textContent = textarea.value;
+            }
+        });
+        
         // Wait a bit for mermaid to load
         for (let i = 0; i < 10 && !window.mermaid; i++) {
             await new Promise(resolve => setTimeout(resolve, 200));

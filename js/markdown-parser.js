@@ -21,7 +21,7 @@ class MarkdownParser {
             // Code blocks with language (special handling for mermaid)
             { pattern: /```(\w+)\n([\s\S]+?)```/g, replacement: (match, lang, code) => {
                 if (lang === 'mermaid') {
-                    return `<div class="mermaid-container"><div class="mermaid">${code}</div></div>`;
+                    return `<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`;
                 }
                 return `<pre><code class="language-${lang}">${this.escapeHtml(code)}</code></pre>`;
             }},
