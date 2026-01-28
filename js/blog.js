@@ -23,19 +23,34 @@ function displayPosts() {
     }
 
     postsGrid.innerHTML = posts.map(post => `
-        <article class="post-card" onclick="viewPost(${post.id})">
+        <article class="post-card" data-post-id="${post.id}">
             <div class="post-image"></div>
             <div class="post-content">
                 <div class="post-meta">
-                    <span class="category-tag">${post.category}</span>
+                    <span class="category-tag">${escapeHtml(post.category)}</span>
                     <span class="date">${formatDate(post.date)}</span>
                 </div>
-                <h3>${post.title}</h3>
-                <p>${post.excerpt}</p>
-                <a href="#" class="read-more" onclick="event.preventDefault()">Read More →</a>
+                <h3>${escapeHtml(post.title)}</h3>
+                <p>${escapeHtml(post.excerpt)}</p>
+                <span class="read-more">Read More →</span>
             </div>
         </article>
     `).join('');
+    
+    // Add click event listeners to post cards
+    document.querySelectorAll('.post-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const postId = card.getAttribute('data-post-id');
+            viewPost(postId);
+        });
+    });
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Format date to readable format

@@ -138,14 +138,8 @@ body {
 
 .read-more {
     color: #3498db;
-    text-decoration: none;
     font-weight: 600;
     display: inline-block;
-    transition: color 0.3s ease;
-}
-
-.read-more:hover {
-    color: #2980b9;
 }
 
 /* Post Detail Page */

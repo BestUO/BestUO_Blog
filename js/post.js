@@ -4,7 +4,15 @@ let posts = [];
 // Get post ID from URL
 function getPostIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return parseInt(urlParams.get('id'));
+    const id = parseInt(urlParams.get('id'));
+    return isNaN(id) ? null : id;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Load posts data
@@ -22,6 +30,12 @@ async function loadPosts() {
 // Display the post
 function displayPost() {
     const postId = getPostIdFromUrl();
+    
+    if (postId === null) {
+        postDetail.innerHTML = '<p class="loading">Invalid post ID.</p>';
+        return;
+    }
+    
     const post = posts.find(p => p.id === postId);
     const postDetail = document.getElementById('postDetail');
     
@@ -31,14 +45,14 @@ function displayPost() {
     }
 
     // Update page title
-    document.title = `${post.title} - BestUO Blog`;
+    document.title = `${escapeHtml(post.title)} - BestUO Blog`;
 
     postDetail.innerHTML = `
         <div class="post-image"></div>
-        <h1>${post.title}</h1>
+        <h1>${escapeHtml(post.title)}</h1>
         <div class="post-meta">
-            <span class="category-tag">${post.category}</span>
-            <span>By ${post.author}</span>
+            <span class="category-tag">${escapeHtml(post.category)}</span>
+            <span>By ${escapeHtml(post.author)}</span>
             <span>${formatDate(post.date)}</span>
         </div>
         <div class="content">
