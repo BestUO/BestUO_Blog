@@ -58,18 +58,19 @@ function displayCategories() {
     `;
     
     // Add individual categories with their posts (collapsed by default)
-    categories.forEach(category => {
+    categories.forEach((category, index) => {
         const categoryPosts = postsByCategory[category] || [];
+        const postListId = `post-list-${index}`;
         html += `
             <li class="category-section collapsed">
-                <div class="category-header" data-category-name="${escapeHtml(category)}" role="button" aria-expanded="false" tabindex="0">
+                <div class="category-header" data-category-name="${escapeHtml(category)}" role="button" aria-expanded="false" aria-controls="${postListId}" tabindex="0">
                     <div class="category-header-content">
                         <span class="expand-icon"></span>
                         <span class="category-name">${escapeHtml(category)}</span>
                     </div>
                     <span class="count">${categoryPosts.length}</span>
                 </div>
-                <ul class="post-list">
+                <ul class="post-list" id="${postListId}">
         `;
         
         // Add posts under this category
