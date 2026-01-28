@@ -62,7 +62,7 @@ function displayCategories() {
         const categoryPosts = postsByCategory[category] || [];
         html += `
             <li class="category-section collapsed">
-                <div class="category-header" data-category-name="${escapeHtml(category)}">
+                <div class="category-header" data-category-name="${escapeHtml(category)}" role="button" aria-expanded="false" tabindex="0">
                     <div class="category-header-content">
                         <span class="expand-icon"></span>
                         <span class="category-name">${escapeHtml(category)}</span>
@@ -93,13 +93,13 @@ function displayCategories() {
     
     // Use event delegation for better performance - attach only once
     if (!categoryListenerAttached) {
+        // Handle click events
         categoryList.addEventListener('click', (e) => {
             // Handle category header click for expand/collapse
             const categoryHeader = e.target.closest('.category-header');
             if (categoryHeader && categoryHeader.hasAttribute('data-category-name')) {
                 e.preventDefault();
-                const categorySection = categoryHeader.closest('.category-section');
-                categorySection.classList.toggle('collapsed');
+                toggleCategory(categoryHeader);
                 return;
             }
             
@@ -121,8 +121,33 @@ function displayCategories() {
                 return;
             }
         });
+        
+        // Handle keyboard events for accessibility
+        categoryList.addEventListener('keydown', (e) => {
+            const categoryHeader = e.target.closest('.category-header');
+            if (categoryHeader && categoryHeader.hasAttribute('data-category-name')) {
+                // Toggle on Enter or Space key
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleCategory(categoryHeader);
+                }
+            }
+        });
+        
         categoryListenerAttached = true;
     }
+}
+
+// Toggle category expand/collapse state
+function toggleCategory(categoryHeader) {
+    const categorySection = categoryHeader.closest('.category-section');
+    const isCollapsed = categorySection.classList.contains('collapsed');
+    
+    // Toggle collapsed class
+    categorySection.classList.toggle('collapsed');
+    
+    // Update aria-expanded attribute for accessibility
+    categoryHeader.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
 }
 
 // Filter posts by category
