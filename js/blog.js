@@ -32,21 +32,57 @@ function displayCategories() {
     }
     
     const categories = getCategories();
+    let html = '';
     
-    // Count posts per category
-    const categoryCounts = {};
+    // Group posts by category
+    const postsByCategory = {};
     posts.forEach(post => {
         if (post.category && typeof post.category === 'string') {
-            categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+            if (!postsByCategory[post.category]) {
+                postsByCategory[post.category] = [];
+            }
+            postsByCategory[post.category].push(post);
         }
     });
     
-    // Create "All" category
-    let html = `<li><a href="#" data-category="All" class="active">All <span class="count">${posts.length}</span></a></li>`;
+    // Create "All Posts" section
+    html += `
+        <li class="category-section">
+            <div class="category-header">
+                <a href="#" data-category="All" class="category-link active">
+                    All Posts <span class="count">${posts.length}</span>
+                </a>
+            </div>
+        </li>
+    `;
     
-    // Add individual categories
+    // Add individual categories with their posts
     categories.forEach(category => {
-        html += `<li><a href="#" data-category="${escapeHtml(category)}">${escapeHtml(category)} <span class="count">${categoryCounts[category]}</span></a></li>`;
+        const categoryPosts = postsByCategory[category] || [];
+        html += `
+            <li class="category-section">
+                <div class="category-header">
+                    <span class="category-name">${escapeHtml(category)}</span>
+                    <span class="count">${categoryPosts.length}</span>
+                </div>
+                <ul class="post-list">
+        `;
+        
+        // Add posts under this category
+        categoryPosts.forEach(post => {
+            html += `
+                <li class="post-item">
+                    <a href="#" data-post-id="${post.id}" class="post-link">
+                        ${escapeHtml(post.title)}
+                    </a>
+                </li>
+            `;
+        });
+        
+        html += `
+                </ul>
+            </li>
+        `;
     });
     
     categoryList.innerHTML = html;
@@ -54,10 +90,20 @@ function displayCategories() {
     // Use event delegation for better performance
     categoryList.addEventListener('click', (e) => {
         e.preventDefault();
-        const link = e.target.closest('a');
-        if (link) {
+        const target = e.target;
+        
+        // Handle category link click (All Posts)
+        if (target.classList.contains('category-link') || target.closest('.category-link')) {
+            const link = target.classList.contains('category-link') ? target : target.closest('.category-link');
             const category = link.getAttribute('data-category');
             filterByCategory(category);
+        }
+        
+        // Handle post link click
+        if (target.classList.contains('post-link') || target.closest('.post-link')) {
+            const link = target.classList.contains('post-link') ? target : target.closest('.post-link');
+            const postId = link.getAttribute('data-post-id');
+            viewPost(postId);
         }
     });
 }
