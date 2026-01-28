@@ -82,6 +82,7 @@ body {
     padding: 3rem 0;
     min-height: 60vh;
     position: relative;
+    margin-left: 300px;
 }
 
 /* Sidebar Styles */
@@ -372,6 +373,10 @@ body {
 
     .hero h2 {
         font-size: 2rem;
+    }
+    
+    .main-content {
+        margin-left: 0;
     }
     
     .sidebar {
