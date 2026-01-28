@@ -1,0 +1,57 @@
+// Post detail page handler
+let posts = [];
+
+// Get post ID from URL
+function getPostIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return parseInt(urlParams.get('id'));
+}
+
+// Load posts data
+async function loadPosts() {
+    try {
+        const response = await fetch('data/posts.json');
+        posts = await response.json();
+        displayPost();
+    } catch (error) {
+        console.error('Error loading post:', error);
+        document.getElementById('postDetail').innerHTML = '<p class="loading">Error loading post. Please try again later.</p>';
+    }
+}
+
+// Display the post
+function displayPost() {
+    const postId = getPostIdFromUrl();
+    const post = posts.find(p => p.id === postId);
+    const postDetail = document.getElementById('postDetail');
+    
+    if (!post) {
+        postDetail.innerHTML = '<p class="loading">Post not found.</p>';
+        return;
+    }
+
+    // Update page title
+    document.title = `${post.title} - BestUO Blog`;
+
+    postDetail.innerHTML = `
+        <div class="post-image"></div>
+        <h1>${post.title}</h1>
+        <div class="post-meta">
+            <span class="category-tag">${post.category}</span>
+            <span>By ${post.author}</span>
+            <span>${formatDate(post.date)}</span>
+        </div>
+        <div class="content">
+            ${post.content}
+        </div>
+    `;
+}
+
+// Format date to readable format
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+// Initialize post page when DOM is loaded
+document.addEventListener('DOMContentLoaded', loadPosts);
