@@ -17,19 +17,28 @@ async function loadPosts() {
 
 // Extract unique categories from posts
 function getCategories() {
-    const categories = posts.map(post => post.category);
+    const categories = posts
+        .map(post => post.category)
+        .filter(category => category && typeof category === 'string'); // Filter out null/undefined
     return [...new Set(categories)].sort();
 }
 
 // Display categories in sidebar
 function displayCategories() {
     const categoryList = document.getElementById('categoryList');
+    if (!categoryList) {
+        console.error('Category list element not found');
+        return;
+    }
+    
     const categories = getCategories();
     
     // Count posts per category
     const categoryCounts = {};
     posts.forEach(post => {
-        categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+        if (post.category && typeof post.category === 'string') {
+            categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+        }
     });
     
     // Create "All" category
@@ -42,13 +51,14 @@ function displayCategories() {
     
     categoryList.innerHTML = html;
     
-    // Add click event listeners to category links
-    document.querySelectorAll('.category-list a').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
+    // Use event delegation for better performance
+    categoryList.addEventListener('click', (e) => {
+        e.preventDefault();
+        const link = e.target.closest('a');
+        if (link) {
             const category = link.getAttribute('data-category');
             filterByCategory(category);
-        });
+        }
     });
 }
 
