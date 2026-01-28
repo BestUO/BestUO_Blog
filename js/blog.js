@@ -57,13 +57,16 @@ function displayCategories() {
         </li>
     `;
     
-    // Add individual categories with their posts
+    // Add individual categories with their posts (collapsed by default)
     categories.forEach(category => {
         const categoryPosts = postsByCategory[category] || [];
         html += `
-            <li class="category-section">
-                <div class="category-header">
-                    <span class="category-name">${escapeHtml(category)}</span>
+            <li class="category-section collapsed">
+                <div class="category-header clickable" data-category="${escapeHtml(category)}">
+                    <span class="category-name">
+                        <span class="chevron">▶</span>
+                        ${escapeHtml(category)}
+                    </span>
                     <span class="count">${categoryPosts.length}</span>
                 </div>
                 <ul class="post-list">
@@ -91,6 +94,17 @@ function displayCategories() {
     // Use event delegation for better performance - attach only once
     if (!categoryListenerAttached) {
         categoryList.addEventListener('click', (e) => {
+            // Handle category header click (toggle collapse/expand)
+            const categoryHeader = e.target.closest('.category-header.clickable');
+            if (categoryHeader) {
+                e.preventDefault();
+                const categorySection = categoryHeader.closest('.category-section');
+                if (categorySection) {
+                    categorySection.classList.toggle('collapsed');
+                }
+                return;
+            }
+            
             // Handle category link click (All Posts)
             const categoryLink = e.target.closest('.category-link');
             if (categoryLink) {

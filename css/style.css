@@ -116,6 +116,11 @@ body {
     margin-bottom: 1.5rem;
 }
 
+/* Collapsed state - hide post list by default */
+.category-section.collapsed .post-list {
+    display: none;
+}
+
 .category-header {
     display: flex;
     justify-content: space-between;
@@ -127,9 +132,38 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Make clickable category headers have pointer cursor */
+.category-header.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 0.5rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    border-radius: 5px;
+}
+
+.category-header.clickable:hover {
+    background-color: #f8f9fa;
+}
+
 .category-name {
     font-size: 1rem;
     color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Chevron icon for expand/collapse */
+.chevron {
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate chevron when expanded */
+.category-section:not(.collapsed) .chevron {
+    transform: rotate(90deg);
 }
 
 .category-link {
@@ -171,6 +205,28 @@ body {
 .post-list {
     list-style: none;
     padding-left: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+/* Smooth animation for expanding/collapsing */
+.category-section.collapsed .post-list {
+    display: none;
+}
+
+.category-section:not(.collapsed) .post-list {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+    }
 }
 
 .post-item {
