@@ -1,11 +1,13 @@
 // Blog posts data handler
 let posts = [];
+let currentCategory = 'All';
 
 // Load posts from JSON file
 async function loadPosts() {
     try {
         const response = await fetch('data/posts.json');
         posts = await response.json();
+        displayCategories();
         displayPosts();
     } catch (error) {
         console.error('Error loading posts:', error);
@@ -13,16 +15,73 @@ async function loadPosts() {
     }
 }
 
+// Extract unique categories from posts
+function getCategories() {
+    const categories = posts.map(post => post.category);
+    return [...new Set(categories)].sort();
+}
+
+// Display categories in sidebar
+function displayCategories() {
+    const categoryList = document.getElementById('categoryList');
+    const categories = getCategories();
+    
+    // Count posts per category
+    const categoryCounts = {};
+    posts.forEach(post => {
+        categoryCounts[post.category] = (categoryCounts[post.category] || 0) + 1;
+    });
+    
+    // Create "All" category
+    let html = `<li><a href="#" data-category="All" class="active">All <span class="count">${posts.length}</span></a></li>`;
+    
+    // Add individual categories
+    categories.forEach(category => {
+        html += `<li><a href="#" data-category="${escapeHtml(category)}">${escapeHtml(category)} <span class="count">${categoryCounts[category]}</span></a></li>`;
+    });
+    
+    categoryList.innerHTML = html;
+    
+    // Add click event listeners to category links
+    document.querySelectorAll('.category-list a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = link.getAttribute('data-category');
+            filterByCategory(category);
+        });
+    });
+}
+
+// Filter posts by category
+function filterByCategory(category) {
+    currentCategory = category;
+    
+    // Update active state
+    document.querySelectorAll('.category-list a').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-category') === category) {
+            link.classList.add('active');
+        }
+    });
+    
+    displayPosts();
+}
+
 // Display posts in grid
 function displayPosts() {
     const postsGrid = document.getElementById('postsGrid');
     
-    if (posts.length === 0) {
-        postsGrid.innerHTML = '<p class="loading">No posts available.</p>';
+    // Filter posts by category
+    const filteredPosts = currentCategory === 'All' 
+        ? posts 
+        : posts.filter(post => post.category === currentCategory);
+    
+    if (filteredPosts.length === 0) {
+        postsGrid.innerHTML = '<p class="loading">No posts available in this category.</p>';
         return;
     }
 
-    postsGrid.innerHTML = posts.map(post => `
+    postsGrid.innerHTML = filteredPosts.map(post => `
         <article class="post-card" data-post-id="${post.id}">
             <div class="post-image" ${post.imageUrl ? `style="background-image: url('${sanitizeUrl(post.imageUrl)}');"` : ''}></div>
             <div class="post-content">
