@@ -83,12 +83,86 @@ body {
     min-height: 60vh;
 }
 
+/* Content Wrapper with Sidebar */
+.content-wrapper {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    flex: 0 0 250px;
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 80px;
+}
+
+.sidebar h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+}
+
+.category-list {
+    list-style: none;
+}
+
+.category-list li {
+    margin-bottom: 0.5rem;
+}
+
+.category-list a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #555;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.category-list a:hover {
+    background-color: #f0f0f0;
+    color: #3498db;
+    padding-left: 1.5rem;
+}
+
+.category-list a.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.category-list .count {
+    float: right;
+    background-color: #e0e0e0;
+    color: #666;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+}
+
+.category-list a.active .count {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* Posts Container */
+.posts-container {
+    flex: 1;
+    min-width: 0;
+}
+
 /* Posts Grid */
 .posts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
-    margin-top: 2rem;
 }
 
 .post-card {
@@ -257,6 +331,16 @@ body {
 
     .hero h2 {
         font-size: 2rem;
+    }
+    
+    .content-wrapper {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: static;
+        flex: 1;
+        width: 100%;
     }
 
     .posts-grid {
