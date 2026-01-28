@@ -60,16 +60,22 @@ function displayCategories() {
     // Add individual categories with their posts (collapsed by default)
     categories.forEach(category => {
         const categoryPosts = postsByCategory[category] || [];
+        const categoryId = `category-${escapeHtml(category).replace(/\s+/g, '-').toLowerCase()}`;
         html += `
             <li class="category-section collapsed">
-                <div class="category-header clickable" data-category="${escapeHtml(category)}">
+                <div class="category-header clickable" 
+                     data-category="${escapeHtml(category)}"
+                     role="button"
+                     tabindex="0"
+                     aria-expanded="false"
+                     aria-controls="${categoryId}">
                     <span class="category-name">
                         <span class="chevron">▶</span>
                         ${escapeHtml(category)}
                     </span>
                     <span class="count">${categoryPosts.length}</span>
                 </div>
-                <ul class="post-list">
+                <ul class="post-list" id="${categoryId}">
         `;
         
         // Add posts under this category
@@ -98,10 +104,7 @@ function displayCategories() {
             const categoryHeader = e.target.closest('.category-header.clickable');
             if (categoryHeader) {
                 e.preventDefault();
-                const categorySection = categoryHeader.closest('.category-section');
-                if (categorySection) {
-                    categorySection.classList.toggle('collapsed');
-                }
+                toggleCategory(categoryHeader);
                 return;
             }
             
@@ -123,7 +126,28 @@ function displayCategories() {
                 return;
             }
         });
+        
+        // Add keyboard support for category headers
+        categoryList.addEventListener('keydown', (e) => {
+            const categoryHeader = e.target.closest('.category-header.clickable');
+            if (categoryHeader && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                toggleCategory(categoryHeader);
+            }
+        });
+        
         categoryListenerAttached = true;
+    }
+}
+
+// Toggle category expand/collapse
+function toggleCategory(categoryHeader) {
+    const categorySection = categoryHeader.closest('.category-section');
+    if (categorySection) {
+        const isCollapsed = categorySection.classList.contains('collapsed');
+        categorySection.classList.toggle('collapsed');
+        // Update aria-expanded for accessibility
+        categoryHeader.setAttribute('aria-expanded', isCollapsed ? 'true' : 'false');
     }
 }
 
