@@ -92,13 +92,15 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    flex: 0 0 250px;
+    flex: 0 0 280px;
     background: white;
     border-radius: 8px;
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: sticky;
     top: 80px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
 }
 
 .sidebar h3 {
@@ -113,11 +115,27 @@ body {
     list-style: none;
 }
 
-.category-list li {
+.category-section {
+    margin-bottom: 1.5rem;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 1px solid #e0e0e0;
     margin-bottom: 0.5rem;
 }
 
-.category-list a {
+.category-name {
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.category-link {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -127,15 +145,15 @@ body {
     border-radius: 5px;
     transition: all 0.3s ease;
     font-weight: 500;
+    width: 100%;
 }
 
-.category-list a:hover {
+.category-link:hover {
     background-color: #f0f0f0;
     color: #3498db;
-    transform: translateX(0.5rem);
 }
 
-.category-list a.active {
+.category-link.active {
     background-color: #3498db;
     color: white;
 }
@@ -148,9 +166,35 @@ body {
     font-size: 0.85rem;
 }
 
-.category-list a.active .count {
+.category-link.active .count {
     background-color: rgba(255, 255, 255, 0.3);
     color: white;
+}
+
+.post-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.post-item {
+    margin-bottom: 0.3rem;
+}
+
+.post-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    line-height: 1.4;
+}
+
+.post-link:hover {
+    background-color: #f8f9fa;
+    color: #3498db;
+    padding-left: 1rem;
 }
 
 /* Posts Container */
