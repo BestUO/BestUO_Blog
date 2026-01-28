@@ -34,21 +34,19 @@
 
     <!-- Blog Posts Grid -->
     <main class="main-content">
+        <!-- Left Sidebar with Categories -->
+        <aside class="sidebar" role="navigation" aria-label="Category filter navigation">
+            <h3>Categories</h3>
+            <ul class="category-list" id="categoryList">
+                <!-- Categories will be dynamically loaded here -->
+            </ul>
+        </aside>
+        
+        <!-- Posts Grid -->
         <div class="container">
-            <div class="content-wrapper">
-                <!-- Left Sidebar with Categories -->
-                <aside class="sidebar" role="navigation" aria-label="Category filter navigation">
-                    <h3>Categories</h3>
-                    <ul class="category-list" id="categoryList">
-                        <!-- Categories will be dynamically loaded here -->
-                    </ul>
-                </aside>
-                
-                <!-- Posts Grid -->
-                <div class="posts-container">
-                    <div class="posts-grid" id="postsGrid">
-                        <!-- Posts will be dynamically loaded here -->
-                    </div>
+            <div class="posts-container">
+                <div class="posts-grid" id="postsGrid">
+                    <!-- Posts will be dynamically loaded here -->
                 </div>
             </div>
         </div>
