@@ -108,8 +108,10 @@ body {
 .post-image {
     width: 100%;
     height: 200px;
-    object-fit: cover;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .post-content {
@@ -169,6 +171,9 @@ body {
     height: 400px;
     margin-bottom: 2rem;
     border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .post-detail .content {

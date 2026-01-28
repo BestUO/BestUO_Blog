@@ -79,7 +79,7 @@ async function displayPost() {
     const content = await loadMarkdownContent(post.contentFile);
 
     postDetail.innerHTML = `
-        <div class="post-image"></div>
+        <div class="post-image" ${post.imageUrl ? `style="background-image: url('${escapeHtml(post.imageUrl)}');"` : ''}></div>
         <h1>${escapeHtml(post.title)}</h1>
         <div class="post-meta">
             <span class="category-tag">${escapeHtml(post.category)}</span>

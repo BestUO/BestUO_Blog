@@ -6,7 +6,8 @@
         "date": "2026-01-15",
         "category": "Web Development",
         "excerpt": "Learn the fundamentals of web development and start your journey in creating amazing websites.",
-        "contentFile": "data/posts/1.md"
+        "contentFile": "data/posts/1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
         "id": 2,
@@ -15,7 +16,8 @@
         "date": "2026-01-20",
         "category": "CSS",
         "excerpt": "Explore modern CSS features including Grid, Flexbox, and CSS Variables to create stunning layouts.",
-        "contentFile": "data/posts/2.md"
+        "contentFile": "data/posts/2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&h=400&fit=crop"
     },
     {
         "id": 3,
