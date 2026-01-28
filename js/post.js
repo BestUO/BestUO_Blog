@@ -15,6 +15,25 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Sanitize URL for use in CSS context
+function sanitizeUrl(url) {
+    // Validate that the URL starts with http:// or https://
+    if (!url || typeof url !== 'string') {
+        return '';
+    }
+    
+    // Check if URL starts with allowed protocols
+    if (!url.match(/^https?:\/\//i)) {
+        return '';
+    }
+    
+    // Escape special characters that could break out of CSS url() context
+    // Replace single quotes, backslashes, and newlines
+    return url.replace(/['\\\n\r]/g, (match) => {
+        return '\\' + match.charCodeAt(0).toString(16) + ' ';
+    });
+}
+
 // Load and render markdown content
 async function loadMarkdownContent(contentFile) {
     try {
@@ -79,7 +98,7 @@ async function displayPost() {
     const content = await loadMarkdownContent(post.contentFile);
 
     postDetail.innerHTML = `
-        <div class="post-image" ${post.imageUrl ? `style="background-image: url('${escapeHtml(post.imageUrl)}');"` : ''}></div>
+        <div class="post-image" ${post.imageUrl ? `style="background-image: url('${sanitizeUrl(post.imageUrl)}');"` : ''}></div>
         <h1>${escapeHtml(post.title)}</h1>
         <div class="post-meta">
             <span class="category-tag">${escapeHtml(post.category)}</span>
