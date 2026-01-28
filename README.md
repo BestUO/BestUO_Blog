@@ -118,9 +118,12 @@ Edit the `data/posts.json` file and add a new post object:
     "date": "2026-01-28",
     "category": "Category Name",
     "excerpt": "Brief description of your post...",
-    "contentFile": "data/posts/6.md"
+    "contentFile": "data/posts/6.md",
+    "imageUrl": "https://example.com/image.jpg"
 }
 ```
+
+**Note:** The `imageUrl` field is optional. If provided, it will be used as the post's cover image. If omitted, a default gradient background will be displayed.
 
 ### Supported Markdown Features
 
