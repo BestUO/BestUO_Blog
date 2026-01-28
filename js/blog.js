@@ -1,6 +1,7 @@
 // Blog posts data handler
 let posts = [];
 let currentCategory = 'All';
+let categoryListenerAttached = false;
 
 // Load posts from JSON file
 async function loadPosts() {
@@ -87,33 +88,37 @@ function displayCategories() {
     
     categoryList.innerHTML = html;
     
-    // Use event delegation for better performance
-    categoryList.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = e.target;
-        
-        // Handle category link click (All Posts)
-        if (target.classList.contains('category-link') || target.closest('.category-link')) {
-            const link = target.classList.contains('category-link') ? target : target.closest('.category-link');
-            const category = link.getAttribute('data-category');
-            filterByCategory(category);
-        }
-        
-        // Handle post link click
-        if (target.classList.contains('post-link') || target.closest('.post-link')) {
-            const link = target.classList.contains('post-link') ? target : target.closest('.post-link');
-            const postId = link.getAttribute('data-post-id');
-            viewPost(postId);
-        }
-    });
+    // Use event delegation for better performance - attach only once
+    if (!categoryListenerAttached) {
+        categoryList.addEventListener('click', (e) => {
+            // Handle category link click (All Posts)
+            const categoryLink = e.target.closest('.category-link');
+            if (categoryLink) {
+                e.preventDefault();
+                const category = categoryLink.getAttribute('data-category');
+                filterByCategory(category);
+                return;
+            }
+            
+            // Handle post link click
+            const postLink = e.target.closest('.post-link');
+            if (postLink) {
+                e.preventDefault();
+                const postId = postLink.getAttribute('data-post-id');
+                viewPost(postId);
+                return;
+            }
+        });
+        categoryListenerAttached = true;
+    }
 }
 
 // Filter posts by category
 function filterByCategory(category) {
     currentCategory = category;
     
-    // Update active state
-    document.querySelectorAll('.category-list a').forEach(link => {
+    // Update active state for category links
+    document.querySelectorAll('.category-link').forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('data-category') === category) {
             link.classList.add('active');
