@@ -1,4 +1,10 @@
 /* Reset and Base Styles */
+:root {
+    --header-height: 78px;
+    --hero-height: 239px;
+    --sidebar-top: calc(var(--header-height) + var(--hero-height));
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -89,13 +95,13 @@ body {
 .sidebar {
     position: fixed;
     left: 0;
-    top: 317px;
+    top: var(--sidebar-top);
     width: 280px;
     background: white;
     border-radius: 0 8px 8px 0;
     padding: 1.5rem;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-    max-height: calc(100vh - 337px);
+    max-height: calc(100vh - var(--sidebar-top) - 20px);
     overflow-y: auto;
     z-index: 50;
 }
