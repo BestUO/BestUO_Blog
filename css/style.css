@@ -291,3 +291,64 @@ body {
     font-size: 0.85rem;
     margin-right: 0.5rem;
 }
+
+/* Markdown Content Styles */
+.content code {
+    background-color: #f4f4f4;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    color: #e83e8c;
+}
+
+.content pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.content pre code {
+    background-color: transparent;
+    padding: 0;
+    color: #333;
+}
+
+.content strong {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Mermaid Diagram Styles */
+.mermaid-container {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.mermaid {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.mermaid-fallback {
+    text-align: left;
+}
+
+.mermaid-fallback em {
+    color: #666;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.mermaid-fallback pre {
+    background-color: #fff;
+    text-align: left;
+}

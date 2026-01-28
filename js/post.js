@@ -24,16 +24,9 @@ async function loadMarkdownContent(contentFile) {
         }
         const markdown = await response.text();
         
-        // Configure marked to support code blocks
-        marked.setOptions({
-            breaks: true,
-            gfm: true,
-            headerIds: true,
-            mangle: false
-        });
-        
-        // Parse markdown to HTML
-        const html = marked.parse(markdown);
+        // Parse markdown to HTML using our local parser
+        const parser = new MarkdownParser();
+        const html = parser.parse(markdown);
         return html;
     } catch (error) {
         console.error('Error loading markdown:', error);
@@ -43,39 +36,11 @@ async function loadMarkdownContent(contentFile) {
 
 // Render mermaid diagrams
 async function renderMermaidDiagrams() {
-    // Wait a bit for content to be inserted into DOM
+    // Wait for content to be inserted
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
-    
-    for (let i = 0; i < mermaidBlocks.length; i++) {
-        const block = mermaidBlocks[i];
-        const code = block.textContent;
-        const pre = block.parentElement;
-        
-        try {
-            // Create a container for the mermaid diagram
-            const container = document.createElement('div');
-            container.className = 'mermaid';
-            container.textContent = code;
-            
-            // Replace the pre block with the mermaid container
-            pre.parentElement.replaceChild(container, pre);
-        } catch (error) {
-            console.error('Error rendering mermaid diagram:', error);
-        }
-    }
-    
-    // Render all mermaid diagrams
-    if (window.mermaid && document.querySelectorAll('.mermaid').length > 0) {
-        try {
-            await window.mermaid.run({
-                querySelector: '.mermaid'
-            });
-        } catch (error) {
-            console.error('Error running mermaid:', error);
-        }
-    }
+    const renderer = new MermaidRenderer();
+    await renderer.render();
 }
 
 // Load posts data
