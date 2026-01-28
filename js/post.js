@@ -20,7 +20,7 @@ async function loadMarkdownContent(contentFile) {
     try {
         const response = await fetch(contentFile);
         if (!response.ok) {
-            throw new Error(`Failed to load markdown file: ${contentFile}`);
+            throw new Error(`Failed to load markdown file: ${contentFile} (HTTP ${response.status})`);
         }
         const markdown = await response.text();
         
