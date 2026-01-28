@@ -20,9 +20,17 @@ BestUO_Blog/
 │   └── style.css       # All styling and responsive design
 ├── js/
 │   ├── blog.js         # Homepage functionality
-│   └── post.js         # Post detail page functionality
+│   ├── post.js         # Post detail page functionality
+│   ├── markdown-parser.js  # Markdown to HTML parser
+│   └── mermaid-renderer.js # Mermaid diagram renderer
 └── data/
-    └── posts.json      # Blog posts data
+    ├── posts.json      # Blog posts metadata
+    └── posts/          # Markdown content files
+        ├── 1.md
+        ├── 2.md
+        ├── 3.md
+        ├── 4.md
+        └── 5.md
 ```
 
 ## Getting Started
@@ -64,19 +72,67 @@ You can also open `index.html` directly in your browser, but some features may n
 
 ### Adding New Blog Posts
 
-Edit the `data/posts.json` file and add new post objects:
+Blog posts are now stored as Markdown files for easier editing and better readability.
+
+### Step 1: Create a Markdown file
+
+Create a new `.md` file in the `data/posts/` directory (e.g., `6.md`):
+
+```markdown
+## Your Section Title
+
+Your content here with **bold text**, *italic text*, and [links](https://example.com).
+
+### Subsection
+
+- List item 1
+- List item 2
+- List item 3
+
+You can also include code blocks:
+
+\```javascript
+function example() {
+    console.log("Hello World");
+}
+\```
+
+And even Mermaid diagrams:
+
+\```mermaid
+graph TD
+    A[Start] --> B[Process]
+    B --> C[End]
+\```
+```
+
+### Step 2: Add entry to posts.json
+
+Edit the `data/posts.json` file and add a new post object:
 
 ```json
 {
-    "id": 5,
+    "id": 6,
     "title": "Your Post Title",
     "author": "Your Name",
     "date": "2026-01-28",
     "category": "Category Name",
     "excerpt": "Brief description of your post...",
-    "content": "<h2>Section Title</h2><p>Your content here...</p>"
+    "contentFile": "data/posts/6.md"
 }
 ```
+
+### Supported Markdown Features
+
+- Headers (# H1, ## H2, ### H3)
+- Bold text (**bold**)
+- Italic text (*italic*)
+- Links ([text](url))
+- Unordered lists (- item)
+- Inline code (`code`)
+- Code blocks with syntax highlighting
+- Mermaid diagrams (in code blocks with \```mermaid)
+
 
 ### Changing Colors
 
@@ -102,7 +158,9 @@ The blog uses CSS Grid for the posts layout. Adjust the grid settings in `.posts
 - **HTML5** - Semantic markup
 - **CSS3** - Modern styling with Grid and Flexbox
 - **JavaScript (ES6+)** - Dynamic content loading and interactivity
-- **JSON** - Data storage for blog posts
+- **Markdown** - Content format for blog posts
+- **Mermaid** - Diagram and flowchart rendering (optional CDN)
+- **JSON** - Data storage for blog posts metadata
 
 ## Features in Detail
 
