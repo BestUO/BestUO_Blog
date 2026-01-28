@@ -6,7 +6,7 @@
         "date": "2026-01-15",
         "category": "Web Development",
         "excerpt": "Learn the fundamentals of web development and start your journey in creating amazing websites.",
-        "content": "<h2>Introduction to Web Development</h2><p>Web development is an exciting field that combines creativity with technical skills. Whether you're looking to build your first website or advance your career, understanding the basics is crucial.</p><h2>Essential Technologies</h2><p>To get started with web development, you'll need to learn three core technologies:</p><ul><li><strong>HTML</strong> - The structure of web pages</li><li><strong>CSS</strong> - The styling and layout</li><li><strong>JavaScript</strong> - The interactivity and logic</li></ul><h2>Your First Steps</h2><p>Start by creating simple HTML pages, then add CSS for styling. Once you're comfortable with these, dive into JavaScript to make your pages interactive. Practice regularly and build projects to solidify your understanding.</p><p>Remember, every expert was once a beginner. Take your time, be patient with yourself, and enjoy the learning process!</p>"
+        "contentFile": "data/posts/1.md"
     },
     {
         "id": 2,
@@ -15,7 +15,7 @@
         "date": "2026-01-20",
         "category": "CSS",
         "excerpt": "Explore modern CSS features including Grid, Flexbox, and CSS Variables to create stunning layouts.",
-        "content": "<h2>The Evolution of CSS</h2><p>CSS has evolved tremendously over the years. Modern CSS offers powerful features that make creating complex layouts easier than ever before.</p><h2>CSS Grid</h2><p>CSS Grid is a two-dimensional layout system that gives you precise control over your page layout. It's perfect for creating complex, responsive designs with minimal code.</p><h2>Flexbox</h2><p>Flexbox is ideal for one-dimensional layouts. It makes aligning items, distributing space, and creating flexible components much simpler.</p><h2>CSS Variables</h2><p>CSS variables (custom properties) allow you to store values that you can reuse throughout your stylesheet. This makes your CSS more maintainable and easier to theme.</p><p>By mastering these modern techniques, you'll be able to create beautiful, responsive websites with cleaner and more maintainable code.</p>"
+        "contentFile": "data/posts/2.md"
     },
     {
         "id": 3,
@@ -24,7 +24,7 @@
         "date": "2026-01-25",
         "category": "JavaScript",
         "excerpt": "Discover essential JavaScript best practices that will help you write cleaner, more efficient code.",
-        "content": "<h2>Writing Quality JavaScript</h2><p>JavaScript is a powerful language, but it's important to follow best practices to write code that's maintainable, efficient, and bug-free.</p><h2>Key Best Practices</h2><ul><li><strong>Use meaningful variable names</strong> - Your code should be self-documenting</li><li><strong>Keep functions small and focused</strong> - Each function should do one thing well</li><li><strong>Avoid global variables</strong> - Use modules and closures to encapsulate your code</li><li><strong>Handle errors properly</strong> - Always anticipate and handle potential errors</li><li><strong>Comment your code</strong> - Explain the why, not just the what</li></ul><h2>Modern JavaScript Features</h2><p>Take advantage of ES6+ features like arrow functions, destructuring, spread operators, and async/await. These features make your code more concise and readable.</p><p>Remember, writing good code is a skill that improves with practice and experience.</p>"
+        "contentFile": "data/posts/3.md"
     },
     {
         "id": 4,
@@ -33,6 +33,15 @@
         "date": "2026-01-27",
         "category": "Design",
         "excerpt": "Master the art of creating websites that look great on all devices with responsive design principles.",
-        "content": "<h2>What is Responsive Design?</h2><p>Responsive design is an approach to web design that ensures your website looks and works well on all devices, from desktop computers to mobile phones.</p><h2>Mobile-First Approach</h2><p>Start designing for mobile devices first, then progressively enhance for larger screens. This ensures your website works well on the smallest screens and takes advantage of larger displays when available.</p><h2>Key Techniques</h2><ul><li><strong>Flexible grids</strong> - Use relative units like percentages instead of fixed pixels</li><li><strong>Flexible images</strong> - Make images scale with their containers</li><li><strong>Media queries</strong> - Apply different styles based on device characteristics</li></ul><h2>Testing Your Design</h2><p>Always test your responsive designs on real devices. Emulators are helpful, but nothing beats testing on actual hardware.</p><p>With responsive design, you can create one website that provides an optimal experience for all users, regardless of their device.</p>"
+        "contentFile": "data/posts/4.md"
+    },
+    {
+        "id": 5,
+        "title": "Understanding Software Development Lifecycle",
+        "author": "Alex Chen",
+        "date": "2026-01-28",
+        "category": "Software Engineering",
+        "excerpt": "Explore the structured process of software development with visual diagrams and best practices.",
+        "contentFile": "data/posts/5.md"
     }
 ]
