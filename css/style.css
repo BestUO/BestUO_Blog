@@ -420,6 +420,12 @@ body {
 }
 
 /* Responsive Design */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .header .container {
         flex-direction: column;
