@@ -45,7 +45,7 @@ async function loadMarkdownContent(contentFile) {
         
         // Parse markdown to HTML using our enhanced parser (supports tables, ordered lists, etc.)
         const parser = new MarkdownParser();
-        const html = await parser.parse(markdown);
+        const html = parser.parse(markdown);
         return html;
     } catch (error) {
         console.error('Error loading markdown:', error);

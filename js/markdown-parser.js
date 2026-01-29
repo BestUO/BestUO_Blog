@@ -5,6 +5,9 @@ class MarkdownParser {
     constructor() {
         // GFM-style table regex
         this.tableRegex = /^\|(.+)\|\s*\n\|[\s:|-]+\|\s*\n((?:\|.+\|\s*\n?)+)/gm;
+        // Unique placeholder to avoid collision with user content
+        this.codeBlockPrefix = '\x00__MDPARSE_CODEBLOCK_';
+        this.codeBlockSuffix = '__\x00';
     }
     
     escapeHtml(text) {
@@ -32,9 +35,11 @@ class MarkdownParser {
         
         rowData.forEach(row => {
             html += '<tr>\n';
-            row.forEach(cell => {
+            // Pad rows to match header count if needed
+            for (let i = 0; i < headerCells.length; i++) {
+                const cell = row[i] || '';
                 html += `<td>${this.parseInline(cell)}</td>`;
-            });
+            }
             html += '</tr>\n';
         });
         
@@ -43,9 +48,10 @@ class MarkdownParser {
     }
     
     parseInline(text) {
-        // Parse inline markdown (bold, italic, code, links)
-        let result = text;
+        // Escape HTML first to prevent XSS
+        let result = this.escapeHtml(text);
         
+        // Parse inline markdown (bold, italic, code, links)
         // Code (must come before bold/italic)
         result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
         
@@ -55,18 +61,23 @@ class MarkdownParser {
         // Italic
         result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
         
-        // Links
-        result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        // Links (already escaped, so we need to unescape the URL part)
+        result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+            // Create a temporary div to decode HTML entities in URL
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = url;
+            const decodedUrl = tempDiv.textContent;
+            return `<a href="${decodedUrl}">${text}</a>`;
+        });
         
         return result;
     }
     
     parseOrderedList(text) {
-        // Match ordered list blocks
+        // Match ordered list blocks - only at start of line
         const listRegex = /^(\d+)\.\s+(.+)$/gm;
         let match;
         const items = [];
-        let lastIndex = 0;
         
         while ((match = listRegex.exec(text)) !== null) {
             items.push({
@@ -75,7 +86,6 @@ class MarkdownParser {
                 content: match[2],
                 fullMatch: match[0]
             });
-            lastIndex = match.index + match[0].length;
         }
         
         if (items.length === 0) return text;
@@ -84,21 +94,21 @@ class MarkdownParser {
         let result = text;
         let offset = 0;
         
-        let i = 0;
-        while (i < items.length) {
+        let currentIndex = 0;
+        while (currentIndex < items.length) {
             let listHtml = '<ol>\n';
-            let consecutiveItems = [items[i]];
+            let consecutiveItems = [items[currentIndex]];
             
             // Find consecutive list items
-            let j = i + 1;
-            while (j < items.length) {
-                const prevEnd = items[j-1].index + items[j-1].fullMatch.length;
-                const currentStart = items[j].index;
+            let nextIndex = currentIndex + 1;
+            while (nextIndex < items.length) {
+                const prevEnd = items[nextIndex-1].index + items[nextIndex-1].fullMatch.length;
+                const currentStart = items[nextIndex].index;
                 // Check if items are consecutive (only whitespace between)
                 const between = text.substring(prevEnd, currentStart);
                 if (between.trim() === '' || between === '\n') {
-                    consecutiveItems.push(items[j]);
-                    j++;
+                    consecutiveItems.push(items[nextIndex]);
+                    nextIndex++;
                 } else {
                     break;
                 }
@@ -118,7 +128,7 @@ class MarkdownParser {
             result = result.substring(0, startIdx) + listHtml + result.substring(endIdx);
             offset += listHtml.length - (endIdx - startIdx);
             
-            i = j;
+            currentIndex = nextIndex;
         }
         
         return result;
@@ -126,18 +136,18 @@ class MarkdownParser {
     
     parseUnorderedList(html) {
         // Wrap consecutive <li> tags in <ul>
-        return html.replace(/(<li>.*?<\/li>\n?)+/g, match => {
+        return html.replace(/(<li>[\s\S]*?<\/li>\n?)+/g, match => {
             return '<ul>\n' + match + '</ul>\n';
         });
     }
     
-    async parse(markdown) {
+    parse(markdown) {
         let html = markdown;
         
         // Extract code blocks first to protect them
         const codeBlocks = [];
         html = html.replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => {
-            const placeholder = `___CODE_BLOCK_${codeBlocks.length}___`;
+            const placeholder = `${this.codeBlockPrefix}${codeBlocks.length}${this.codeBlockSuffix}`;
             if (lang === 'mermaid') {
                 codeBlocks.push(`<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`);
             } else {
@@ -156,12 +166,20 @@ class MarkdownParser {
         html = this.parseOrderedList(html);
         
         // Headers (must be on their own line)
-        html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-        html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-        html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+        html = html.replace(/^### (.+)$/gm, (match, text) => {
+            return `<h3>${this.escapeHtml(text)}</h3>`;
+        });
+        html = html.replace(/^## (.+)$/gm, (match, text) => {
+            return `<h2>${this.escapeHtml(text)}</h2>`;
+        });
+        html = html.replace(/^# (.+)$/gm, (match, text) => {
+            return `<h1>${this.escapeHtml(text)}</h1>`;
+        });
         
-        // Unordered lists (simplified)
-        html = html.replace(/^[\-\*\+]\s+(.+)$/gm, '<li>$1</li>');
+        // Unordered lists (simplified) - escape content
+        html = html.replace(/^[\-\*\+]\s+(.+)$/gm, (match, text) => {
+            return `<li>${this.escapeHtml(text)}</li>`;
+        });
         html = this.parseUnorderedList(html);
         
         // Inline code (must come before bold/italic)
@@ -178,7 +196,8 @@ class MarkdownParser {
         
         // Restore code blocks
         codeBlocks.forEach((block, index) => {
-            html = html.replace(`___CODE_BLOCK_${index}___`, block);
+            const placeholder = `${this.codeBlockPrefix}${index}${this.codeBlockSuffix}`;
+            html = html.replace(placeholder, block);
         });
         
         // Convert double line breaks to paragraphs

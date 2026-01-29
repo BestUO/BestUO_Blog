@@ -133,12 +133,14 @@ The blog uses an enhanced markdown parser that supports:
 - **Bold text** (\*\*bold\*\*)
 - **Italic text** (\*italic\*)
 - **Links** ([text](url))
-- **Ordered lists** (1. 2. 3. with proper numbering and nesting)
+- **Ordered lists** (1. 2. 3. with proper numbering)
 - **Unordered lists** (- item or * item)
 - **Tables** (GitHub Flavored Markdown style with | separators)
 - **Inline code** (\`code\`)
 - **Code blocks** with syntax highlighting
 - **Mermaid diagrams** (in code blocks with \```mermaid)
+
+**Note:** Nested lists using indentation are not currently supported. Use consecutive items at the same level.
 
 #### Table Example
 

@@ -623,13 +623,3 @@ body {
     font-weight: 600;
     color: #3498db;
 }
-
-/* Nested ordered lists */
-.content ol ol {
-    margin-left: 2rem;
-    margin-top: 0.5rem;
-}
-
-.content ol ol li::before {
-    color: #764ba2;
-}
