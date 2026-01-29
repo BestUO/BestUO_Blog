@@ -1,76 +1,10 @@
-// Enhanced Markdown Parser using marked.js library
-// Supports comprehensive markdown features including ordered lists, tables, and mermaid code blocks
+// Enhanced Markdown Parser with comprehensive feature support
+// Supports ordered lists, tables, and mermaid code blocks
 
 class MarkdownParser {
     constructor() {
-        this.markedLoaded = false;
-        this.markedPromise = this.loadMarked();
-    }
-    
-    async loadMarked() {
-        // Check if marked is already loaded
-        if (window.marked) {
-            this.markedLoaded = true;
-            this.configureMarked();
-            return;
-        }
-        
-        try {
-            // Load marked.js from CDN
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js';
-            script.async = false;
-            
-            await new Promise((resolve, reject) => {
-                script.onload = resolve;
-                script.onerror = () => reject(new Error('Failed to load marked.js'));
-                document.head.appendChild(script);
-            });
-            
-            // Wait a bit for marked to be available
-            for (let i = 0; i < 20 && !window.marked; i++) {
-                await new Promise(resolve => setTimeout(resolve, 50));
-            }
-            
-            if (!window.marked) {
-                throw new Error('marked.js not available after loading');
-            }
-            
-            this.markedLoaded = true;
-            this.configureMarked();
-        } catch (error) {
-            console.error('Error loading marked.js:', error);
-            this.markedLoaded = false;
-        }
-    }
-    
-    configureMarked() {
-        if (!window.marked) return;
-        
-        // Configure marked with custom renderer for mermaid blocks
-        const renderer = new marked.Renderer();
-        
-        // Override code block rendering to handle mermaid specially
-        const originalCode = renderer.code.bind(renderer);
-        renderer.code = (code, language) => {
-            if (language === 'mermaid') {
-                return `<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`;
-            }
-            return originalCode(code, language);
-        };
-        
-        // Configure marked options
-        marked.setOptions({
-            renderer: renderer,
-            gfm: true,              // GitHub Flavored Markdown
-            breaks: false,          // Don't convert \n to <br>
-            pedantic: false,
-            smartLists: true,       // Better list handling
-            smartypants: false,
-            headerIds: true,
-            mangle: false,
-            sanitize: false         // We trust our own content
-        });
+        // GFM-style table regex
+        this.tableRegex = /^\|(.+)\|\s*\n\|[\s:|-]+\|\s*\n((?:\|.+\|\s*\n?)+)/gm;
     }
     
     escapeHtml(text) {
@@ -79,67 +13,186 @@ class MarkdownParser {
         return div.innerHTML;
     }
     
-    async parse(markdown) {
-        // Wait for marked to load if it hasn't yet
-        await this.markedPromise;
+    parseTable(match, headers, rows) {
+        // Parse headers
+        const headerCells = headers.split('|').map(h => h.trim()).filter(h => h);
         
-        if (!this.markedLoaded || !window.marked) {
-            console.error('marked.js not loaded, falling back to basic parsing');
-            return this.fallbackParse(markdown);
-        }
+        // Parse rows
+        const rowLines = rows.trim().split('\n');
+        const rowData = rowLines.map(row => {
+            return row.split('|').map(cell => cell.trim()).filter(cell => cell);
+        });
         
-        try {
-            // Parse markdown using marked.js
-            const html = marked.parse(markdown);
-            return html;
-        } catch (error) {
-            console.error('Error parsing markdown with marked:', error);
-            return this.fallbackParse(markdown);
-        }
+        // Build HTML table
+        let html = '<table>\n<thead>\n<tr>\n';
+        headerCells.forEach(header => {
+            html += `<th>${this.parseInline(header)}</th>`;
+        });
+        html += '</tr>\n</thead>\n<tbody>\n';
+        
+        rowData.forEach(row => {
+            html += '<tr>\n';
+            row.forEach(cell => {
+                html += `<td>${this.parseInline(cell)}</td>`;
+            });
+            html += '</tr>\n';
+        });
+        
+        html += '</tbody>\n</table>';
+        return html;
     }
     
-    // Fallback parser for when marked.js fails to load
-    fallbackParse(markdown) {
+    parseInline(text) {
+        // Parse inline markdown (bold, italic, code, links)
+        let result = text;
+        
+        // Code (must come before bold/italic)
+        result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
+        
+        // Bold
+        result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic
+        result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        
+        // Links
+        result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        
+        return result;
+    }
+    
+    parseOrderedList(text) {
+        // Match ordered list blocks
+        const listRegex = /^(\d+)\.\s+(.+)$/gm;
+        let match;
+        const items = [];
+        let lastIndex = 0;
+        
+        while ((match = listRegex.exec(text)) !== null) {
+            items.push({
+                index: match.index,
+                number: match[1],
+                content: match[2],
+                fullMatch: match[0]
+            });
+            lastIndex = match.index + match[0].length;
+        }
+        
+        if (items.length === 0) return text;
+        
+        // Build the ordered list HTML
+        let result = text;
+        let offset = 0;
+        
+        let i = 0;
+        while (i < items.length) {
+            let listHtml = '<ol>\n';
+            let consecutiveItems = [items[i]];
+            
+            // Find consecutive list items
+            let j = i + 1;
+            while (j < items.length) {
+                const prevEnd = items[j-1].index + items[j-1].fullMatch.length;
+                const currentStart = items[j].index;
+                // Check if items are consecutive (only whitespace between)
+                const between = text.substring(prevEnd, currentStart);
+                if (between.trim() === '' || between === '\n') {
+                    consecutiveItems.push(items[j]);
+                    j++;
+                } else {
+                    break;
+                }
+            }
+            
+            // Build list items
+            consecutiveItems.forEach(item => {
+                listHtml += `<li>${this.parseInline(item.content)}</li>\n`;
+            });
+            listHtml += '</ol>';
+            
+            // Replace in result
+            const startIdx = consecutiveItems[0].index + offset;
+            const endIdx = consecutiveItems[consecutiveItems.length - 1].index + 
+                          consecutiveItems[consecutiveItems.length - 1].fullMatch.length + offset;
+            
+            result = result.substring(0, startIdx) + listHtml + result.substring(endIdx);
+            offset += listHtml.length - (endIdx - startIdx);
+            
+            i = j;
+        }
+        
+        return result;
+    }
+    
+    parseUnorderedList(html) {
+        // Wrap consecutive <li> tags in <ul>
+        return html.replace(/(<li>.*?<\/li>\n?)+/g, match => {
+            return '<ul>\n' + match + '</ul>\n';
+        });
+    }
+    
+    async parse(markdown) {
         let html = markdown;
         
-        // Basic rules for fallback
-        const rules = [
-            { pattern: /^### (.*$)/gim, replacement: '<h3>$1</h3>' },
-            { pattern: /^## (.*$)/gim, replacement: '<h2>$1</h2>' },
-            { pattern: /^# (.*$)/gim, replacement: '<h1>$1</h1>' },
-            { pattern: /\*\*(.+?)\*\*/g, replacement: '<strong>$1</strong>' },
-            { pattern: /\*(.+?)\*/g, replacement: '<em>$1</em>' },
-            { pattern: /\[([^\]]+)\]\(([^)]+)\)/g, replacement: '<a href="$2">$1</a>' },
-            { pattern: /```(\w+)\n([\s\S]+?)```/g, replacement: (match, lang, code) => {
-                if (lang === 'mermaid') {
-                    return `<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`;
-                }
-                return `<pre><code class="language-${lang}">${this.escapeHtml(code)}</code></pre>`;
-            }},
-            { pattern: /`(.+?)`/g, replacement: '<code>$1</code>' },
-            { pattern: /^\- (.+)$/gim, replacement: '<li>$1</li>' },
-        ];
-        
-        rules.forEach(rule => {
-            if (typeof rule.replacement === 'function') {
-                html = html.replace(rule.pattern, rule.replacement);
+        // Extract code blocks first to protect them
+        const codeBlocks = [];
+        html = html.replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => {
+            const placeholder = `___CODE_BLOCK_${codeBlocks.length}___`;
+            if (lang === 'mermaid') {
+                codeBlocks.push(`<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`);
             } else {
-                html = html.replace(rule.pattern, rule.replacement);
+                const langClass = lang ? ` class="language-${lang}"` : '';
+                codeBlocks.push(`<pre><code${langClass}>${this.escapeHtml(code)}</code></pre>`);
             }
+            return placeholder;
         });
         
-        html = html.replace(/(<li>.*<\/li>\n?)+/g, match => {
-            return '<ul>' + match + '</ul>';
+        // Parse tables
+        html = html.replace(this.tableRegex, (match, headers, rows) => {
+            return this.parseTable(match, headers, rows);
         });
         
-        html = html.split('\n\n').map(block => {
-            if (block.trim().startsWith('<')) {
+        // Parse ordered lists
+        html = this.parseOrderedList(html);
+        
+        // Headers (must be on their own line)
+        html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+        
+        // Unordered lists (simplified)
+        html = html.replace(/^[\-\*\+]\s+(.+)$/gm, '<li>$1</li>');
+        html = this.parseUnorderedList(html);
+        
+        // Inline code (must come before bold/italic)
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        
+        // Bold
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+        // Italic
+        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        
+        // Links
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        
+        // Restore code blocks
+        codeBlocks.forEach((block, index) => {
+            html = html.replace(`___CODE_BLOCK_${index}___`, block);
+        });
+        
+        // Convert double line breaks to paragraphs
+        const lines = html.split('\n\n');
+        html = lines.map(block => {
+            block = block.trim();
+            if (block === '') return '';
+            
+            // Don't wrap if already has HTML tags
+            if (block.match(/^<(h[1-6]|ul|ol|table|pre|div)/)) {
                 return block;
             }
-            if (block.trim() === '') {
-                return '';
-            }
-            return '<p>' + block.trim() + '</p>';
+            
+            return '<p>' + block + '</p>';
         }).join('\n');
         
         return html;
