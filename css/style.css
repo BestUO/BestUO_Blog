@@ -23,7 +23,7 @@ body {
     background-color: #2c3e50;
     color: white;
     padding: 1rem 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -88,15 +88,17 @@ body {
     display: flex;
     gap: 2rem;
     align-items: flex-start;
+    max-width: none;
+    width: 90%;
 }
 
 /* Sidebar Styles */
 .sidebar {
-    flex: 0 0 calc(25% - 1rem);
+    flex: 0 0 calc(20% - 1rem);
     background: white;
     border-radius: 8px;
     padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 80px;
     max-height: calc(100vh - 100px);
@@ -105,10 +107,7 @@ body {
 
 /* Content Wrapper */
 .content-wrapper {
-    flex: 0 0 calc(75% - 1rem);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex: 0 0 calc(80% - 1rem);
 }
 
 .sidebar h3 {
@@ -273,14 +272,14 @@ body {
     background: white;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
 .post-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
 .post-image {
@@ -327,7 +326,7 @@ body {
     background: white;
     border-radius: 8px;
     padding: 3rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     margin: 0 auto;
 }
@@ -436,17 +435,17 @@ body {
     .hero h2 {
         font-size: 2rem;
     }
-    
+
     .main-content .container {
         flex-direction: column;
     }
-    
+
     .sidebar {
         position: static;
         flex: 1 1 auto;
         width: 100%;
     }
-    
+
     .content-wrapper {
         flex: 1 1 auto;
         width: 100%;
