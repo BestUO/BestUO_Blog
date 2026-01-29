@@ -127,14 +127,31 @@ Edit the `data/posts.json` file and add a new post object:
 
 ### Supported Markdown Features
 
-- Headers (# H1, ## H2, ### H3)
-- Bold text (**bold**)
-- Italic text (*italic*)
-- Links ([text](url))
-- Unordered lists (- item)
-- Inline code (`code`)
-- Code blocks with syntax highlighting
-- Mermaid diagrams (in code blocks with \```mermaid)
+The blog uses an enhanced markdown parser that supports:
+
+- **Headers** (# H1, ## H2, ### H3)
+- **Bold text** (\*\*bold\*\*)
+- **Italic text** (\*italic\*)
+- **Links** ([text](url))
+- **Ordered lists** (1. 2. 3. with proper numbering and nesting)
+- **Unordered lists** (- item or * item)
+- **Tables** (GitHub Flavored Markdown style with | separators)
+- **Inline code** (\`code\`)
+- **Code blocks** with syntax highlighting
+- **Mermaid diagrams** (in code blocks with \```mermaid)
+
+#### Table Example
+
+Tables use GitHub Flavored Markdown syntax:
+
+```markdown
+| Header 1    | Header 2    | Header 3    |
+|-------------|-------------|-------------|
+| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 |
+| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 |
+```
+
+Tables are automatically styled with blue headers and hover effects for better readability.
 
 
 ### Changing Colors
