@@ -92,7 +92,7 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    flex: 0 0 25%;
+    flex: 0 0 calc(25% - 1rem);
     background: white;
     border-radius: 8px;
     padding: 1.5rem;
@@ -105,7 +105,7 @@ body {
 
 /* Content Wrapper */
 .content-wrapper {
-    flex: 0 0 75%;
+    flex: 0 0 calc(75% - 1rem);
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -267,7 +267,6 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
     width: 100%;
-    max-width: 100%;
 }
 
 .post-card {
