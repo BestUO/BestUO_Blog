@@ -83,8 +83,8 @@ body {
     min-height: 60vh;
 }
 
-/* Content Wrapper with Sidebar */
-.content-wrapper {
+/* Main Content Container Layout */
+.main-content .container {
     display: flex;
     gap: 2rem;
     align-items: flex-start;
@@ -92,7 +92,7 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    flex: 0 0 280px;
+    flex: 0 0 25%;
     background: white;
     border-radius: 8px;
     padding: 1.5rem;
@@ -101,6 +101,14 @@ body {
     top: 80px;
     max-height: calc(100vh - 100px);
     overflow-y: auto;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+    flex: 0 0 75%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .sidebar h3 {
@@ -253,17 +261,13 @@ body {
     padding-left: 1rem;
 }
 
-/* Posts Container */
-.posts-container {
-    flex: 1;
-    min-width: 0;
-}
-
 /* Posts Grid */
 .posts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 2rem;
+    width: 100%;
+    max-width: 100%;
 }
 
 .post-card {
@@ -434,13 +438,18 @@ body {
         font-size: 2rem;
     }
     
-    .content-wrapper {
+    .main-content .container {
         flex-direction: column;
     }
     
     .sidebar {
         position: static;
-        flex: 1;
+        flex: 1 1 auto;
+        width: 100%;
+    }
+    
+    .content-wrapper {
+        flex: 1 1 auto;
         width: 100%;
     }
 
