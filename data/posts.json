@@ -45,5 +45,15 @@
         "category": "Software Engineering",
         "excerpt": "Explore the structured process of software development with visual diagrams and best practices.",
         "contentFile": "data/posts/5.md"
+    },
+    {
+        "id": 6,
+        "title": "Enhanced Markdown Features: Tables and Lists",
+        "author": "System Admin",
+        "date": "2026-01-29",
+        "category": "Documentation",
+        "excerpt": "Demonstrating the newly added markdown features including ordered lists, tables, and continued support for mermaid diagrams.",
+        "contentFile": "data/posts/6.md",
+        "imageUrl": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&h=400&fit=crop"
     }
 ]
