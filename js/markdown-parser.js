@@ -92,17 +92,22 @@ class MarkdownParser {
         const tableRegex = /(\|.*\|)\n(\|[\s\-:|]+)\n((?:\|.*\|\n?)+)/gm;
         
         return markdown.replace(tableRegex, (match, header, separator, body) => {
+            // Validate separator has at least some hyphens
+            if (!/-/.test(separator)) {
+                return match; // Return original if separator is invalid
+            }
+            
             // Parse header
             const headerCells = header.split('|').slice(1, -1).map(cell => cell.trim());
             const headerHtml = '<thead><tr>' + 
-                headerCells.map(cell => `<th>${cell}</th>`).join('') + 
+                headerCells.map(cell => `<th>${this.escapeHtml(cell)}</th>`).join('') + 
                 '</tr></thead>';
             
             // Parse body rows
             const rows = body.trim().split('\n').filter(row => row.trim());
             const bodyHtml = '<tbody>' + rows.map(row => {
                 const cells = row.split('|').slice(1, -1).map(cell => cell.trim());
-                return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+                return '<tr>' + cells.map(cell => `<td>${this.escapeHtml(cell)}</td>`).join('') + '</tr>';
             }).join('') + '</tbody>';
             
             // Add newlines before and after to ensure it's treated as a block
