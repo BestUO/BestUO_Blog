@@ -132,6 +132,8 @@ Edit the `data/posts.json` file and add a new post object:
 - Italic text (*italic*)
 - Links ([text](url))
 - Unordered lists (- item)
+- Ordered lists (1. item, 2. item, ...)
+- Tables (| Header | Header | with separator row)
 - Inline code (`code`)
 - Code blocks with syntax highlighting
 - Mermaid diagrams (in code blocks with \```mermaid)

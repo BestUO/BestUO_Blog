@@ -45,5 +45,15 @@
         "category": "Software Engineering",
         "excerpt": "Explore the structured process of software development with visual diagrams and best practices.",
         "contentFile": "data/posts/5.md"
+    },
+    {
+        "id": 6,
+        "title": "Top 5 Programming Languages in 2026",
+        "author": "David Lee",
+        "date": "2026-01-29",
+        "category": "Programming",
+        "excerpt": "Discover the top programming languages to learn this year with detailed comparisons and rankings.",
+        "contentFile": "data/posts/6.md",
+        "imageUrl": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&h=400&fit=crop"
     }
 ]

@@ -88,7 +88,8 @@ class MarkdownParser {
     
     parseTables(markdown) {
         // Match markdown tables: lines with pipes that form a table structure
-        const tableRegex = /^(\|.+\|)\n(\|[\s\-:]+\|)\n((?:\|.+\|\n?)+)/gm;
+        // This regex matches: header row, separator row, and one or more body rows  
+        const tableRegex = /(\|.*\|)\n(\|[\s\-:|]+)\n((?:\|.*\|\n?)+)/gm;
         
         return markdown.replace(tableRegex, (match, header, separator, body) => {
             // Parse header
@@ -104,7 +105,8 @@ class MarkdownParser {
                 return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
             }).join('') + '</tbody>';
             
-            return `<table>${headerHtml}${bodyHtml}</table>`;
+            // Add newlines before and after to ensure it's treated as a block
+            return `\n\n<table>${headerHtml}${bodyHtml}</table>\n\n`;
         });
     }
 }
