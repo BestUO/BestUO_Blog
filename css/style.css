@@ -549,3 +549,87 @@ body {
     background-color: #fff;
     text-align: left;
 }
+
+/* Table Styles */
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.content table thead {
+    background-color: #3498db;
+    color: white;
+}
+
+.content table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+}
+
+.content table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #e0e0e0;
+    color: #444;
+}
+
+.content table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.content table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+/* Alternating row colors for better readability */
+.content table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.content table tbody tr:nth-child(even):hover {
+    background-color: #f0f0f0;
+}
+
+/* Ordered List Styles */
+.content ol {
+    counter-reset: item;
+    list-style: none;
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.content ol li {
+    counter-increment: item;
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 0.5rem;
+}
+
+.content ol li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: -2rem;
+    width: 1.5rem;
+    text-align: right;
+    font-weight: 600;
+    color: #3498db;
+}
+
+/* Nested ordered lists */
+.content ol ol {
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+}
+
+.content ol ol li::before {
+    color: #764ba2;
+}
