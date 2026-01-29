@@ -29,8 +29,11 @@ class MarkdownParser {
             // Inline code
             { pattern: /`(.+?)`/g, replacement: '<code>$1</code>' },
             
-            // Lists (simplified)
+            // Unordered lists
             { pattern: /^\- (.+)$/gim, replacement: '<li>$1</li>' },
+            
+            // Ordered lists (numbered)
+            { pattern: /^\d+\.\s+(.+)$/gim, replacement: '<li class="ordered">$1</li>' },
         ];
     }
     
@@ -43,6 +46,9 @@ class MarkdownParser {
     parse(markdown) {
         let html = markdown;
         
+        // Process tables first (before other replacements)
+        html = this.parseTables(html);
+        
         // Apply all rules
         this.rules.forEach(rule => {
             if (typeof rule.replacement === 'function') {
@@ -52,8 +58,15 @@ class MarkdownParser {
             }
         });
         
-        // Wrap consecutive <li> tags in <ul>
-        html = html.replace(/(<li>.*<\/li>\n?)+/g, match => {
+        // Wrap consecutive <li class="ordered"> tags in <ol>
+        html = html.replace(/(<li class="ordered">.*?<\/li>\n?)+/g, match => {
+            // Remove the class attribute from list items within <ol>
+            const cleanedMatch = match.replace(/ class="ordered"/g, '');
+            return '<ol>' + cleanedMatch + '</ol>';
+        });
+        
+        // Wrap consecutive <li> tags (unordered) in <ul>
+        html = html.replace(/(<li>.*?<\/li>\n?)+/g, match => {
             return '<ul>' + match + '</ul>';
         });
         
@@ -71,6 +84,28 @@ class MarkdownParser {
         }).join('\n');
         
         return html;
+    }
+    
+    parseTables(markdown) {
+        // Match markdown tables: lines with pipes that form a table structure
+        const tableRegex = /^(\|.+\|)\n(\|[\s\-:]+\|)\n((?:\|.+\|\n?)+)/gm;
+        
+        return markdown.replace(tableRegex, (match, header, separator, body) => {
+            // Parse header
+            const headerCells = header.split('|').slice(1, -1).map(cell => cell.trim());
+            const headerHtml = '<thead><tr>' + 
+                headerCells.map(cell => `<th>${cell}</th>`).join('') + 
+                '</tr></thead>';
+            
+            // Parse body rows
+            const rows = body.trim().split('\n').filter(row => row.trim());
+            const bodyHtml = '<tbody>' + rows.map(row => {
+                const cells = row.split('|').slice(1, -1).map(cell => cell.trim());
+                return '<tr>' + cells.map(cell => `<td>${cell}</td>`).join('') + '</tr>';
+            }).join('') + '</tbody>';
+            
+            return `<table>${headerHtml}${bodyHtml}</table>`;
+        });
     }
 }
 
