@@ -369,10 +369,59 @@ body {
     margin-bottom: 1rem;
 }
 
-.post-detail .content ul,
-.post-detail .content ol {
-    margin-left: 2rem;
+/* Unordered List Styles - 修改后 */
+.content ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
     margin-bottom: 1rem;
+}
+
+.content ul li {
+    position: relative;
+    padding-left: 2.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.8;
+}
+
+.content ul li::before {
+    content: "•";
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #3498db;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1;
+}
+
+/* Ordered List Styles - 修改后 */
+.content ol {
+    list-style: none;
+    margin-left: 0;
+    margin-bottom: 1rem;
+    padding-left: 0;
+    counter-reset: item;
+}
+
+.content ol li {
+    counter-increment: item;
+    margin-bottom: 0.5rem;
+    position: relative;
+    padding-left: 2.5rem;
+    line-height: 1.8;
+}
+
+.content ol li::before {
+    content: counter(item) ".";
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #3498db;
+    line-height: 1;
 }
 
 .back-link {
@@ -597,29 +646,4 @@ body {
 
 .content table tbody tr:nth-child(even):hover {
     background-color: #f0f0f0;
-}
-
-/* Ordered List Styles */
-.content ol {
-    counter-reset: item;
-    list-style: none;
-    margin-left: 2rem;
-    margin-bottom: 1rem;
-}
-
-.content ol li {
-    counter-increment: item;
-    margin-bottom: 0.5rem;
-    position: relative;
-    padding-left: 0.5rem;
-}
-
-.content ol li::before {
-    content: counter(item) ".";
-    position: absolute;
-    left: -2rem;
-    width: 1.5rem;
-    text-align: right;
-    font-weight: 600;
-    color: #3498db;
 }
