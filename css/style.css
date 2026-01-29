@@ -106,9 +106,6 @@ body {
 /* Content Wrapper */
 .content-wrapper {
     flex: 0 0 calc(75% - 1rem);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
 }
 
 .sidebar h3 {
