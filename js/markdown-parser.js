@@ -43,8 +43,8 @@ class MarkdownParser {
             html += '</tr>\n';
         });
         
-        html += '</tbody>\n</table>';
-        return html;
+    html += '</tbody>\n</table>';
+    return html + '\n\n';
     }
     
     parseInline(text) {
@@ -135,10 +135,12 @@ class MarkdownParser {
     }
     
     parseUnorderedList(html) {
-        // Wrap consecutive <li> tags in <ul>
-        return html.replace(/(<li>[\s\S]*?<\/li>\n?)+/g, match => {
-            return '<ul>\n' + match + '</ul>\n';
-        });
+        // Wrap only unordered list <li> tags (tagged with data-list="ul")
+        return html
+            .replace(/(<li data-list="ul">[\s\S]*?<\/li>\n?)+/g, match => {
+                return '<ul>\n' + match + '</ul>\n';
+            })
+            .replace(/<li data-list="ul">/g, '<li>');
     }
     
     parse(markdown) {
@@ -178,7 +180,7 @@ class MarkdownParser {
         
         // Unordered lists (simplified) - escape content
         html = html.replace(/^[\-\*\+]\s+(.+)$/gm, (match, text) => {
-            return `<li>${this.escapeHtml(text)}</li>`;
+            return `<li data-list="ul">${this.escapeHtml(text)}</li>`;
         });
         html = this.parseUnorderedList(html);
         
