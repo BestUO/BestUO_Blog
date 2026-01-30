@@ -378,6 +378,7 @@ body {
     margin-left: 2rem;
     margin-bottom: 1rem;
     list-style: none;
+    counter-reset: item;
 }
 
 .back-link {
