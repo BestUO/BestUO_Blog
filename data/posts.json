@@ -1,59 +1,22 @@
 [
     {
         "id": 1,
-        "title": "Getting Started with Web Development",
-        "author": "John Doe",
-        "date": "2026-01-15",
-        "category": "Web Development",
-        "excerpt": "Learn the fundamentals of web development and start your journey in creating amazing websites.",
-        "contentFile": "data/posts/1.md",
+        "title": "性能分析",
+        "author": "Thomas Chen",
+        "date": "2026-01-29",
+        "category": "debug",
+        "excerpt": "性能/内存分析示例",
+        "contentFile": "data/posts/performance.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
         "id": 2,
-        "title": "Modern CSS Techniques",
-        "author": "Jane Smith",
-        "date": "2026-01-20",
-        "category": "CSS",
-        "excerpt": "Explore modern CSS features including Grid, Flexbox, and CSS Variables to create stunning layouts.",
-        "contentFile": "data/posts/2.md",
-        "imageUrl": "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 3,
-        "title": "JavaScript Best Practices",
-        "author": "Mike Johnson",
-        "date": "2026-01-25",
-        "category": "JavaScript",
-        "excerpt": "Discover essential JavaScript best practices that will help you write cleaner, more efficient code.",
-        "contentFile": "data/posts/3.md"
-    },
-    {
-        "id": 4,
-        "title": "Responsive Design Fundamentals",
-        "author": "Sarah Williams",
-        "date": "2026-01-27",
-        "category": "Design",
-        "excerpt": "Master the art of creating websites that look great on all devices with responsive design principles.",
-        "contentFile": "data/posts/4.md"
-    },
-    {
-        "id": 5,
-        "title": "Understanding Software Development Lifecycle",
-        "author": "Alex Chen",
-        "date": "2026-01-28",
-        "category": "Software Engineering",
-        "excerpt": "Explore the structured process of software development with visual diagrams and best practices.",
-        "contentFile": "data/posts/5.md"
-    },
-    {
-        "id": 6,
-        "title": "Enhanced Markdown Features: Tables and Lists",
-        "author": "System Admin",
-        "date": "2026-01-29",
-        "category": "Documentation",
-        "excerpt": "Demonstrating the newly added markdown features including ordered lists, tables, and continued support for mermaid diagrams.",
-        "contentFile": "data/posts/6.md",
-        "imageUrl": "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=800&h=400&fit=crop"
+        "title": "core 文件生成",
+        "author": "Thomas Chen",
+        "date": "2026-01-30",
+        "category": "debug",
+        "excerpt": "core 文件生成示例",
+        "contentFile": "data/posts/core_dump.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
