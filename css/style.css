@@ -369,7 +369,11 @@ body {
     margin-bottom: 1rem;
 }
 
-.post-detail .content ul,
+.post-detail .content ul {
+    margin-left: 2rem;
+    margin-bottom: 1rem;
+}
+
 .post-detail .content ol {
     margin-left: 2rem;
     margin-bottom: 1rem;
