@@ -148,8 +148,11 @@ class MarkdownParser {
         
         // Extract code blocks first to protect them
         const codeBlocks = [];
-        html = html.replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => {
+        // Support both Unix (LF) and Windows (CRLF) line endings
+        html = html.replace(/```(\w+)?\r?\n([\s\S]+?)```/g, (match, lang, code) => {
             const placeholder = `${this.codeBlockPrefix}${codeBlocks.length}${this.codeBlockSuffix}`;
+            // Normalize CRLF to LF in code content
+            code = code.replace(/\r\n/g, '\n');
             if (lang === 'mermaid') {
                 codeBlocks.push(`<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`);
             } else {
