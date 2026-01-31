@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Parser Test</title>
+    <script src="js/markdown-parser.js"></script>
+</head>
+<body>
+    <h1>Testing Markdown Parser</h1>
+    <div id="test1"></div>
+    <hr>
+    <div id="test2"></div>
+    
+    <script>
+        const parser = new MarkdownParser();
+        
+        // Test with same content
+        const markdown = `### 编译选项
+\`\`\`
+# cmaklist中直接打静态库进去
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+   target_link_libraries(\${PROJECT_NAME} tcmalloc_and_profiler)
+endif()
+\`\`\`
+
+### 编译选项
+\`\`\`
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+   add_compile_options(-g -O0 -fsanitize=address -fno-omit-frame-pointer)
+   add_link_options(-fsanitize=address)
+endif()
+\`\`\``;
+
+        const html = parser.parse(markdown);
+        console.log("Parsed HTML:");
+        console.log(html);
+        
+        document.getElementById('test1').innerHTML = html;
+        
+        // Parse the same content again to test consistency
+        const html2 = parser.parse(markdown);
+        document.getElementById('test2').innerHTML = html2;
+        
+        console.log("Both renders identical?", html === html2);
+    </script>
+</body>
+</html>
