@@ -148,7 +148,7 @@ class MarkdownParser {
         
         // Extract code blocks first to protect them
         const codeBlocks = [];
-        html = html.replace(/```(\w+)?\n([\s\S]+?)```/g, (match, lang, code) => {
+        html = html.replace(/```([a-zA-Z0-9_+#.-]*)?\n([\s\S]+?)```/g, (match, lang, code) => {
             const placeholder = `${this.codeBlockPrefix}${codeBlocks.length}${this.codeBlockSuffix}`;
             if (lang === 'mermaid') {
                 codeBlocks.push(`<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`);

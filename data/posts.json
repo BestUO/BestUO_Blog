@@ -6,7 +6,7 @@
         "date": "2026-01-29",
         "category": "debug",
         "excerpt": "性能/内存分析示例",
-        "contentFile": "data/posts/performance.md",
+        "contentFile": "data/posts/debug/performance.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
@@ -16,7 +16,27 @@
         "date": "2026-01-30",
         "category": "debug",
         "excerpt": "core 文件生成示例",
-        "contentFile": "data/posts/core_dump.md",
+        "contentFile": "data/posts/debug/core_dump.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 3,
+        "title": "brpc bthread 解读",
+        "author": "Thomas Chen",
+        "date": "2026-01-31",
+        "category": "cpp",
+        "excerpt": "brpc bthread 解读",
+        "contentFile": "data/posts/cxx/brpc_bthread.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 4,
+        "title": "mem pool",
+        "author": "Thomas Chen",
+        "date": "2026-02-01",
+        "category": "cpp",
+        "excerpt": "200行写一个mempool",
+        "contentFile": "data/posts/cxx/mem_pool.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
