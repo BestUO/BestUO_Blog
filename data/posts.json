@@ -11,12 +11,12 @@
     },
     {
         "id": 2,
-        "title": "core 文件生成",
+        "title": "debug常用工具",
         "author": "Thomas Chen",
         "date": "2026-01-30",
         "category": "debug",
-        "excerpt": "core 文件生成示例",
-        "contentFile": "data/posts/debug/core_dump.md",
+        "excerpt": "debug常用工具介绍",
+        "contentFile": "data/posts/debug/tools.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
