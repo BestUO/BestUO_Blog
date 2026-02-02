@@ -12,6 +12,36 @@
 5. `hexdump -Cv mem.bin` 查看内存块内容
 
 ## Perf
+[介绍1](https://blog.csdn.net/runafterhit/article/details/107801860),[介绍2](https://blog.csdn.net/jasonactions/article/details/109332167)。
+
+### 基本使用
+* `perf top -g -p pid`
+
+### 监控指定事件
+* `perf top -e cache-misses -g -p pid`
+```
+Task-clock-msecs：CPU 利用率，该值高，说明程序的多数时间花费在 CPU 计算上而非 IO。
+Context-switches：进程切换次数，记录了程序运行过程中发生了多少次进程切换，频繁的进程切换是应该避免的。
+Cache-misses：程序运行过程中总体的 cache 利用情况，如果该值过高，说明程序的 cache 利用不好
+CPU-migrations：表示进程 t1 运行过程中发生了多少次 CPU 迁移，即被调度器从一个 CPU 转移到另外一个 CPU 上运行。
+Cycles：处理器时钟，一条机器指令可能需要多个 cycles，
+Instructions: 机器指令数目。
+IPC：是 Instructions/Cycles 的比值，该值越大越好，说明程序充分利用了处理器的特性。
+Cache-references: cache 命中的次数
+Cache-misses: cache 失效的次数。
+注：通过指定 -e 选项，您可以改变 perf stat 的缺省事件
+```
+### 分析锁竞争
+1. `perf lock record -p pid -- sleep 10`
+2. `perf lock report -i perf.data`
+### 记录perf结果并显示
+1. `perf record -g -e cpu-clock ./a`
+2. `perf record -a -e cycles -o cycle.perf -g -p pid sleep 10 	`
+3. `perf report -i cycle.perf | more`
+4. `perf report -i cycle.perf > perf.txt`
+###  提供被调试程序运行的整体情况和汇总数据	
+1. `perf stat -p pid`
+
 ### 火焰图
 1. `git clone https://github.com/brendangregg/FlameGraph.git`
 2. `sudo perf record -g -p $(pidof ttt) -- sleep 10`
