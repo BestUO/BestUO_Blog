@@ -80,14 +80,14 @@ class MarkdownParser {
         
         // Images (must come before links to avoid conflict)
         result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
-            const sanitizedUrl = this.sanitizeUrl(url);
-            const escapedAlt = alt; // Already escaped by escapeHtml
+            const sanitizedUrl = this.escapeHtml(this.sanitizeUrl(url));
+            const escapedAlt = alt; // Already HTML-escaped due to escapeHtml() on input
             return `<img src="${sanitizedUrl}" alt="${escapedAlt}" class="markdown-image">`;
         });
         
         // Links (already escaped, so we need to unescape the URL part)
         result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            const sanitizedUrl = this.sanitizeUrl(url);
+            const sanitizedUrl = this.escapeHtml(this.sanitizeUrl(url));
             return `<a href="${sanitizedUrl}">${text}</a>`;
         });
         
@@ -216,15 +216,15 @@ class MarkdownParser {
         
         // Images (must come before links to avoid conflict)
         html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
-            // Sanitize URL to prevent javascript: and other malicious schemes
-            const sanitizedUrl = this.sanitizeUrl(url);
+            // Sanitize URL and escape HTML to prevent attribute injection
+            const sanitizedUrl = this.escapeHtml(this.sanitizeUrl(url));
             return `<img src="${sanitizedUrl}" alt="${this.escapeHtml(alt)}" class="markdown-image">`;
         });
         
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            // Sanitize URL to prevent javascript: and other malicious schemes
-            const sanitizedUrl = this.sanitizeUrl(url);
+            // Sanitize URL and escape HTML to prevent attribute injection
+            const sanitizedUrl = this.escapeHtml(this.sanitizeUrl(url));
             return `<a href="${sanitizedUrl}">${text}</a>`;
         });
         
