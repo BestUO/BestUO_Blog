@@ -16,6 +16,23 @@ class MarkdownParser {
         return div.innerHTML;
     }
     
+    sanitizeUrl(url) {
+        // Decode HTML entities first
+        const div = document.createElement('div');
+        div.innerHTML = url;
+        const decodedUrl = div.textContent;
+        
+        // Block javascript: and other potentially dangerous schemes
+        const trimmedUrl = decodedUrl.trim().toLowerCase();
+        if (trimmedUrl.startsWith('javascript:') || 
+            trimmedUrl.startsWith('data:') || 
+            trimmedUrl.startsWith('vbscript:')) {
+            return '';
+        }
+        
+        return decodedUrl;
+    }
+    
     parseTable(match, headers, rows) {
         // Parse headers
         const headerCells = headers.split('|').map(h => h.trim()).filter(h => h);
@@ -63,21 +80,15 @@ class MarkdownParser {
         
         // Images (must come before links to avoid conflict)
         result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
-            // Create a temporary div to decode HTML entities in URL
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = url;
-            const decodedUrl = tempDiv.textContent;
+            const sanitizedUrl = this.sanitizeUrl(url);
             const escapedAlt = alt; // Already escaped by escapeHtml
-            return `<img src="${decodedUrl}" alt="${escapedAlt}" class="markdown-image">`;
+            return `<img src="${sanitizedUrl}" alt="${escapedAlt}" class="markdown-image">`;
         });
         
         // Links (already escaped, so we need to unescape the URL part)
         result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-            // Create a temporary div to decode HTML entities in URL
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = url;
-            const decodedUrl = tempDiv.textContent;
-            return `<a href="${decodedUrl}">${text}</a>`;
+            const sanitizedUrl = this.sanitizeUrl(url);
+            return `<a href="${sanitizedUrl}">${text}</a>`;
         });
         
         return result;
@@ -204,10 +215,18 @@ class MarkdownParser {
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
         
         // Images (must come before links to avoid conflict)
-        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="markdown-image">');
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
+            // Sanitize URL to prevent javascript: and other malicious schemes
+            const sanitizedUrl = this.sanitizeUrl(url);
+            return `<img src="${sanitizedUrl}" alt="${this.escapeHtml(alt)}" class="markdown-image">`;
+        });
         
         // Links
-        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+            // Sanitize URL to prevent javascript: and other malicious schemes
+            const sanitizedUrl = this.sanitizeUrl(url);
+            return `<a href="${sanitizedUrl}">${text}</a>`;
+        });
         
         // Restore code blocks
         codeBlocks.forEach((block, index) => {
