@@ -133,6 +133,7 @@ The blog uses an enhanced markdown parser that supports:
 - **Bold text** (\*\*bold\*\*)
 - **Italic text** (\*italic\*)
 - **Links** ([text](url))
+- **Images** (!\[alt text\](url) - supports both project images and URL images)
 - **Ordered lists** (1. 2. 3. with proper numbering)
 - **Unordered lists** (- item or * item)
 - **Tables** (GitHub Flavored Markdown style with | separators)
@@ -141,6 +142,17 @@ The blog uses an enhanced markdown parser that supports:
 - **Mermaid diagrams** (in code blocks with \```mermaid)
 
 **Note:** Nested lists using indentation are not currently supported. Use consecutive items at the same level.
+
+#### Image Example
+
+You can include images in your markdown using the standard syntax:
+
+```markdown
+![Alt text](https://example.com/image.png)
+![Local image](data/posts/images/diagram.png)
+```
+
+Images will be automatically styled with rounded corners and shadows.
 
 #### Table Example
 

@@ -51,7 +51,7 @@ class MarkdownParser {
         // Escape HTML first to prevent XSS
         let result = this.escapeHtml(text);
         
-        // Parse inline markdown (bold, italic, code, links)
+        // Parse inline markdown (bold, italic, code, links, images)
         // Code (must come before bold/italic)
         result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
         
@@ -60,6 +60,16 @@ class MarkdownParser {
         
         // Italic
         result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        
+        // Images (must come before links to avoid conflict)
+        result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
+            // Create a temporary div to decode HTML entities in URL
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = url;
+            const decodedUrl = tempDiv.textContent;
+            const escapedAlt = alt; // Already escaped by escapeHtml
+            return `<img src="${decodedUrl}" alt="${escapedAlt}" class="markdown-image">`;
+        });
         
         // Links (already escaped, so we need to unescape the URL part)
         result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
@@ -192,6 +202,9 @@ class MarkdownParser {
         
         // Italic
         html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        
+        // Images (must come before links to avoid conflict)
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="markdown-image">');
         
         // Links
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
