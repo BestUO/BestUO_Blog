@@ -1,0 +1,99 @@
+# 协程1
+
+## 简介
+协程运行在线程之上，分有栈、无栈、对称、非对称协程。线程数量大于cpu数量会因为时间片轮转进行线程上下文切换，线程遇到io阻塞也会进行线程切换。为了减少线程上下文切换带来的损耗，因此有了协程一说。 协程大致运行流程是：当前协程遇到co_wait/yield保存当前运行栈，调度器检查是否有状态OK的协程事件，切换协程栈运行或继续等待。通过以上流程可以看出，协程的运行机制和异步回调很相似。那为什么不直接使用异步回调呢？个人理解基于以下两方面考虑:
+* 异步回调运行在线程之上，网络框架有成熟的回调机制比如asio，但对于IO操作不可避免会出现线程上下文切换的问题  
+* 当回调请求比较多又有顺序要求时，编程复杂。而协程的另一大特点就是用同步的方式编写异步代码。
+
+
+## 协程的另类实现
+1. [如何在C++17中实现stackless coroutine以及相关的任务调度器](https://zhuanlan.zhihu.com/p/411834453)  
+2. [使用 C 语言实现协程](https://www.chiark.greenend.org.uk/~sgtatham/coroutines.html) [使用 C 语言实现协程(译)](https://mthli.xyz/coroutines-in-c/)
+
+## [云风的协程库](https://github.com/cloudwu/coroutine)
+```c++
+//核心结构体定义
+typedef struct ucontext_t
+{
+unsigned long int __ctx(uc_flags);
+struct ucontext_t *uc_link; //当前context执行结束之后要执行的下一个context，如果uc_link为空，执行完当前context后退出程序。
+stack_t uc_stack;       //上下文所需要的stack。
+mcontext_t uc_mcontext;    //保存具体的程序执行上下文，如PC值、堆栈指针和寄存器的值。它的实现依赖于底层，是硬件平台相关的，因此不透明。
+sigset_t uc_sigmask;    //执行上下文过程中，要屏蔽的信号集合，即信号掩码。
+struct _libc_fpstate __fpregs_mem;
+__extension__ unsigned long long int __ssp[4];
+} ucontext_t;
+
+//核心函数
+/* Get user context and store it in variable pointed to by UCP.  */
+extern int getcontext (ucontext_t *__ucp) __THROWNL;
+/* Set user context from information of variable pointed to by UCP.  */
+extern int setcontext (const ucontext_t *__ucp) __THROWNL;
+/* Save current context in context variable pointed to by OUCP and set
+   context from variable pointed to by UCP.  */
+extern int swapcontext (ucontext_t *__restrict __oucp,
+         const ucontext_t *__restrict __ucp)
+  __THROWNL __INDIRECT_RETURN;
+/* Manipulate user context UCP to continue with calling functions FUNC
+   and the ARGC-1 parameters following ARGC when the context is used
+   the next time in `setcontext' or `swapcontext'.
+
+   We cannot say anything about the parameters FUNC takes; `void'
+   is as good as any other choice.  */
+extern void makecontext (ucontext_t *__ucp, void (*__func) (void),
+          int __argc, ...) __THROW;
+```
+通过ucontext实现协程切换的，该协程库接口简洁代码简单，可以通过他的代码初窥协程门径。和堆不同，栈的增长方向是向地址增长的，因此无栈协程库在做栈保存时要特别注意。S->stack是低地址，S->stack + STACK_SIZE是高地址，而栈空间是往低地址方向增长的，因此在`_save_stack(C,S->stack + STACK_SIZE);`中传入`S->stack + STACK_SIZE`即栈底地址。而dummy是最新的变量，他所在的地址就是栈顶地址`S->stack + STACK_SIZE - &dummy`就是所用的栈空间。  
+可以看到无栈协程的问题是要进行频繁的memcpy、malloc，栈空间则根据实际使用大小，相对的有栈协程就不需要memcpy、malloc但是需要再协程创建的时候就申请足够大的栈空间，在协程很多的时候也是一个问题。
+```c++
+static void
+_save_stack(struct coroutine *C, char *top) {
+   char dummy = 0;
+   assert(top - &dummy <= STACK_SIZE);
+   if (C->cap < top - &dummy) {
+      free(C->stack);
+      C->cap = top-&dummy;
+      C->stack = malloc(C->cap);
+   }
+   C->size = top - &dummy;
+   memcpy(C->stack, &dummy, C->size);
+}
+
+void
+coroutine_yield(struct schedule * S) {
+   int id = S->running;
+   assert(id >= 0);
+   struct coroutine * C = S->co[id];
+   assert((char *)&C > S->stack);
+   _save_stack(C,S->stack + STACK_SIZE);
+   C->status = COROUTINE_SUSPEND;
+   S->running = -1;
+   swapcontext(&C->ctx , &S->main);
+}
+```
+
+## [libgo](https://github.com/yyzybb537/libgo)
+基于c++11的协程库,协程上下文切换由`libgo_jump_fcontext`和`libgo_make_fcontext`两个函数提供。[libgo](https://github.com/yyzybb537/libgo)大致流程由调度器Scheduler管理所有的processer，processer运行在线程之上处理所有的task，在libgo中task是对coroutinue的封装。
+
+* Anys类通过保存Register函数参数的size和align达到保存任意类型的目的。  
+* DispatcherThread线程通过调整runnableQueue_和newQueue_的数量调整各线程负载  
+* channel实现协程间通信，通过`condition_variable pushCv_,popCv_`实现timeout功能。因为channel可以跨线程使用，用mutex进行dequeue的数据同步，所以降低性能。那么一个thread中不同coroutinue之间的数据同步理论上是不需要锁同步的，可以优化这种场景。当channel用于等待协程完成时是不是可用std::packaged_task、std::promise代替？  
+* hook了各种系统函数，非常方便。至于hook demo可以通过[linux hook](http://www.aiecent.com/programs/article/36)简单了解一下。https://blog.csdn.net/whatday/article/details/100185833 https://www.netspi.com/blog/technical/network-penetration-testing/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/ https://www.opensourceforu.com/2011/08/lets-hook-a-library-function/
+
+
+## [librf](https://github.com/tearshark/librf)
+基于c++20的协程库，用了很多c++新特性,看懂的话需要一定c++基础。
+
+* 通过`resumef::future_t<int>`获取协程返回值。
+* `when_any`和`when_all`的想法非常好。当后面的多个表达式any或者all成功时立即返回，通过`detail::when_future_t<when_any_pair>`获取any或者all的返回值，学习。
+* 使用requires进行模板类型检查，简洁优美。
+* 项目中有asio相关的协程改造代码，没看明白怎么用。
+
+
+## 几个开源协程库
+1. [cppcore](https://github.com/lewissbaker/cppcoro  )
+2. [libco](https://github.com/Tencent/libco/  )
+3. [libgo](https://github.com/yyzybb537/libgo)
+4. [librf](https://github.com/tearshark/librf)
+5. [copp](https://github.com/owent/libcopp)
+6. [cloudwu](https://github.com/cloudwu/coroutine)
