@@ -38,5 +38,25 @@
         "excerpt": "200行写一个mempool",
         "contentFile": "data/posts/cxx/mem_pool.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 5,
+        "title": "协程介绍1",
+        "author": "Thomas Chen",
+        "date": "2026-02-03",
+        "category": "cpp",
+        "excerpt": "协程的基本概念和实现",
+        "contentFile": "data/posts/cxx/coroutines1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 6,
+        "title": "core_rpc",
+        "author": "Thomas Chen",
+        "date": "2026-02-04",
+        "category": "cpp",
+        "excerpt": "简单介绍core_rpc的协程、线程池、执行器、collect_all、collect_any、函数注册器功能",
+        "contentFile": "data/posts/cxx/coroutines2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
