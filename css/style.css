@@ -369,59 +369,96 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Unordered List Styles - 修改后 */
+/* Unordered List Styles - 支持嵌套 */
 .content ul {
     list-style: none;
-    padding-left: 0;
+    padding-left: 1.5rem;
     margin-left: 0;
     margin-bottom: 1rem;
 }
 
-.content ul li {
+.content ul > li {
     position: relative;
-    padding-left: 2.5rem;
+    padding-left: 1.2rem;
     margin-bottom: 0.5rem;
     line-height: 1.8;
 }
 
-.content ul li::before {
+.content ul > li::before {
     content: "•";
     position: absolute;
-    left: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 0;
+    top: 0;
     color: #3498db;
     font-size: 1.2em;
     font-weight: bold;
-    line-height: 1;
+    line-height: 1.8;
 }
 
-/* Ordered List Styles - 修改后 */
+/* Nested unordered lists */
+.content ul ul {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.content ul ul > li::before {
+    content: "◦";
+    font-size: 1em;
+}
+
+.content ul ul ul > li::before {
+    content: "▪";
+    font-size: 0.8em;
+}
+
+/* Ordered List Styles - 支持嵌套 */
 .content ol {
     list-style: none;
     margin-left: 0;
     margin-bottom: 1rem;
-    padding-left: 0;
+    padding-left: 1.5rem;
     counter-reset: item;
 }
 
-.content ol li {
+.content ol > li {
     counter-increment: item;
     margin-bottom: 0.5rem;
     position: relative;
-    padding-left: 2.5rem;
+    padding-left: 1.5rem;
     line-height: 1.8;
 }
 
-.content ol li::before {
+.content ol > li::before {
     content: counter(item) ".";
     position: absolute;
-    left: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 0;
+    top: 0;
     font-weight: 600;
     color: #3498db;
-    line-height: 1;
+    line-height: 1.8;
+}
+
+/* Nested ordered lists */
+.content ol ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    counter-reset: item;
+}
+
+.content ol ol ol {
+    counter-reset: item;
+}
+
+/* Mixed nested lists (ul inside ol, ol inside ul) */
+.content ol ul,
+.content ul ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Reset counter for ol inside ul */
+.content ul ol {
+    counter-reset: item;
 }
 
 .back-link {

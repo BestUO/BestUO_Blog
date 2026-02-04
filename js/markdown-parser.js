@@ -94,74 +94,135 @@ class MarkdownParser {
         return result;
     }
     
-    parseOrderedList(text) {
-        // Match ordered list blocks - only at start of line
-        const listRegex = /^(\d+)\.\s+(.+)$/gm;
-        let match;
-        const items = [];
+    parseNestedList(text) {
+        // Parse both ordered and unordered lists with nesting support
+        // Matches lines starting with optional indent (tabs/spaces) followed by list markers
+        const lines = text.split('\n');
+        const result = [];
+        let i = 0;
         
-        while ((match = listRegex.exec(text)) !== null) {
-            items.push({
-                index: match.index,
-                number: match[1],
-                content: match[2],
-                fullMatch: match[0]
-            });
-        }
-        
-        if (items.length === 0) return text;
-        
-        // Build the ordered list HTML
-        let result = text;
-        let offset = 0;
-        
-        let currentIndex = 0;
-        while (currentIndex < items.length) {
-            let listHtml = '<ol>\n';
-            let consecutiveItems = [items[currentIndex]];
+        while (i < lines.length) {
+            const line = lines[i];
+            // Match list item: optional indent + (number. or -/*) + space + content
+            const listMatch = line.match(/^([\t ]*)((\d+)\.|[-*+])\s+(.*)$/);
             
-            // Find consecutive list items
-            let nextIndex = currentIndex + 1;
-            while (nextIndex < items.length) {
-                const prevEnd = items[nextIndex-1].index + items[nextIndex-1].fullMatch.length;
-                const currentStart = items[nextIndex].index;
-                // Check if items are consecutive (only whitespace between)
-                const between = text.substring(prevEnd, currentStart);
-                if (between.trim() === '' || between === '\n') {
-                    consecutiveItems.push(items[nextIndex]);
-                    nextIndex++;
-                } else {
-                    break;
+            if (listMatch) {
+                // Start of a list block
+                const listLines = [];
+                
+                // Collect all consecutive list lines
+                while (i < lines.length) {
+                    const currentLine = lines[i];
+                    const currentMatch = currentLine.match(/^([\t ]*)((\d+)\.|[-*+])\s+(.*)$/);
+                    
+                    if (currentMatch) {
+                        listLines.push({
+                            indent: currentMatch[1],
+                            marker: currentMatch[2],
+                            number: currentMatch[3] || null, // null for unordered
+                            content: currentMatch[4],
+                            raw: currentLine
+                        });
+                        i++;
+                    } else if (currentLine.trim() === '') {
+                        // Empty line might end the list or continue
+                        // Check if next non-empty line is a list item
+                        let j = i + 1;
+                        while (j < lines.length && lines[j].trim() === '') {
+                            j++;
+                        }
+                        if (j < lines.length && lines[j].match(/^([\t ]*)((\d+)\.|[-*+])\s+(.*)$/)) {
+                            i++;
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
                 }
+                
+                // Build nested list HTML
+                if (listLines.length > 0) {
+                    result.push(this.buildNestedListHtml(listLines));
+                }
+            } else {
+                result.push(line);
+                i++;
             }
-            
-            // Build list items
-            consecutiveItems.forEach(item => {
-                listHtml += `<li>${this.parseInline(item.content)}</li>\n`;
-            });
-            listHtml += '</ol>';
-            
-            // Replace in result
-            const startIdx = consecutiveItems[0].index + offset;
-            const endIdx = consecutiveItems[consecutiveItems.length - 1].index + 
-                          consecutiveItems[consecutiveItems.length - 1].fullMatch.length + offset;
-            
-            result = result.substring(0, startIdx) + listHtml + result.substring(endIdx);
-            offset += listHtml.length - (endIdx - startIdx);
-            
-            currentIndex = nextIndex;
         }
         
-        return result;
+        return result.join('\n');
     }
     
-    parseUnorderedList(html) {
-        // Wrap only unordered list <li> tags (tagged with data-list="ul")
-        return html
-            .replace(/(<li data-list="ul">[\s\S]*?<\/li>\n?)+/g, match => {
-                return '<ul>\n' + match + '</ul>\n';
-            })
-            .replace(/<li data-list="ul">/g, '<li>');
+    getIndentLevel(indent) {
+        // Count indent level: each tab = 1 level, 2 spaces = 1 level
+        let level = 0;
+        for (const char of indent) {
+            if (char === '\t') {
+                level += 1;
+            } else if (char === ' ') {
+                level += 0.5; // 2 spaces = 1 level
+            }
+        }
+        return Math.floor(level);
+    }
+    
+    buildNestedListHtml(items) {
+        // Build HTML for nested lists
+        const buildList = (startIndex, baseLevel) => {
+            let html = '';
+            let i = startIndex;
+            let listType = null;
+            let listStarted = false;
+            
+            while (i < items.length) {
+                const item = items[i];
+                const itemLevel = this.getIndentLevel(item.indent);
+                
+                if (itemLevel < baseLevel) {
+                    // This item belongs to a parent level, stop
+                    break;
+                }
+                
+                if (itemLevel > baseLevel) {
+                    // This item is a nested list, recurse
+                    const nested = buildList(i, itemLevel);
+                    // Insert nested list inside the last <li>
+                    if (html.endsWith('</li>\n')) {
+                        html = html.slice(0, -6) + '\n' + nested.html + '</li>\n';
+                    } else {
+                        html += nested.html;
+                    }
+                    i = nested.endIndex;
+                    continue;
+                }
+                
+                // itemLevel === baseLevel
+                const currentType = item.number !== null ? 'ol' : 'ul';
+                
+                if (!listStarted) {
+                    listType = currentType;
+                    html += `<${listType}>\n`;
+                    listStarted = true;
+                } else if (currentType !== listType) {
+                    // Type changed at same level, close and start new list
+                    html += `</${listType}>\n`;
+                    listType = currentType;
+                    html += `<${listType}>\n`;
+                }
+                
+                html += `<li>${this.parseInline(item.content)}</li>\n`;
+                i++;
+            }
+            
+            if (listStarted) {
+                html += `</${listType}>\n`;
+            }
+            
+            return { html, endIndex: i };
+        };
+        
+        return buildList(0, 0).html;
     }
     
     parse(markdown) {
@@ -185,8 +246,8 @@ class MarkdownParser {
             return this.parseTable(match, headers, rows);
         });
         
-        // Parse ordered lists
-        html = this.parseOrderedList(html);
+        // Parse nested lists (both ordered and unordered with hierarchy support)
+        html = this.parseNestedList(html);
         
         // Headers (must be on their own line)
         html = html.replace(/^### (.+)$/gm, (match, text) => {
@@ -198,12 +259,6 @@ class MarkdownParser {
         html = html.replace(/^# (.+)$/gm, (match, text) => {
             return `<h1>${this.escapeHtml(text)}</h1>`;
         });
-        
-        // Unordered lists (simplified) - escape content
-        html = html.replace(/^[\-\*\+]\s+(.+)$/gm, (match, text) => {
-            return `<li data-list="ul">${this.escapeHtml(text)}</li>`;
-        });
-        html = this.parseUnorderedList(html);
         
         // Inline code (must come before bold/italic)
         html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
