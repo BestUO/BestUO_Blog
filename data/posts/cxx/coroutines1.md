@@ -5,7 +5,6 @@
 * 异步回调运行在线程之上，网络框架有成熟的回调机制比如asio，但对于IO操作不可避免会出现线程上下文切换的问题  
 * 当回调请求比较多又有顺序要求时，编程复杂。而协程的另一大特点就是用同步的方式编写异步代码。
 
-
 ## 协程的另类实现
 1. [如何在C++17中实现stackless coroutine以及相关的任务调度器](https://zhuanlan.zhihu.com/p/411834453)  
 2. [使用 C 语言实现协程](https://www.chiark.greenend.org.uk/~sgtatham/coroutines.html) [使用 C 语言实现协程(译)](https://mthli.xyz/coroutines-in-c/)
@@ -43,6 +42,7 @@ extern int swapcontext (ucontext_t *__restrict __oucp,
 extern void makecontext (ucontext_t *__ucp, void (*__func) (void),
           int __argc, ...) __THROW;
 ```
+
 通过ucontext实现协程切换的，该协程库接口简洁代码简单，可以通过他的代码初窥协程门径。和堆不同，栈的增长方向是向地址增长的，因此无栈协程库在做栈保存时要特别注意。S->stack是低地址，S->stack + STACK_SIZE是高地址，而栈空间是往低地址方向增长的，因此在`_save_stack(C,S->stack + STACK_SIZE);`中传入`S->stack + STACK_SIZE`即栈底地址。而dummy是最新的变量，他所在的地址就是栈顶地址`S->stack + STACK_SIZE - &dummy`就是所用的栈空间。  
 可以看到无栈协程的问题是要进行频繁的memcpy、malloc，栈空间则根据实际使用大小，相对的有栈协程就不需要memcpy、malloc但是需要再协程创建的时候就申请足够大的栈空间，在协程很多的时候也是一个问题。
 ```c++
@@ -74,12 +74,10 @@ coroutine_yield(struct schedule * S) {
 
 ## [libgo](https://github.com/yyzybb537/libgo)
 基于c++11的协程库,协程上下文切换由`libgo_jump_fcontext`和`libgo_make_fcontext`两个函数提供。[libgo](https://github.com/yyzybb537/libgo)大致流程由调度器Scheduler管理所有的processer，processer运行在线程之上处理所有的task，在libgo中task是对coroutinue的封装。
-
 * Anys类通过保存Register函数参数的size和align达到保存任意类型的目的。  
 * DispatcherThread线程通过调整runnableQueue_和newQueue_的数量调整各线程负载  
 * channel实现协程间通信，通过`condition_variable pushCv_,popCv_`实现timeout功能。因为channel可以跨线程使用，用mutex进行dequeue的数据同步，所以降低性能。那么一个thread中不同coroutinue之间的数据同步理论上是不需要锁同步的，可以优化这种场景。当channel用于等待协程完成时是不是可用std::packaged_task、std::promise代替？  
 * hook了各种系统函数，非常方便。至于hook demo可以通过[linux hook](http://www.aiecent.com/programs/article/36)简单了解一下。https://blog.csdn.net/whatday/article/details/100185833 https://www.netspi.com/blog/technical/network-penetration-testing/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/ https://www.opensourceforu.com/2011/08/lets-hook-a-library-function/
-
 
 ## [librf](https://github.com/tearshark/librf)
 基于c++20的协程库，用了很多c++新特性,看懂的话需要一定c++基础。
@@ -88,7 +86,6 @@ coroutine_yield(struct schedule * S) {
 * `when_any`和`when_all`的想法非常好。当后面的多个表达式any或者all成功时立即返回，通过`detail::when_future_t<when_any_pair>`获取any或者all的返回值，学习。
 * 使用requires进行模板类型检查，简洁优美。
 * 项目中有asio相关的协程改造代码，没看明白怎么用。
-
 
 ## 几个开源协程库
 1. [cppcore](https://github.com/lewissbaker/cppcoro  )

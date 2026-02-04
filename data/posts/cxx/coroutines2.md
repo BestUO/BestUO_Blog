@@ -47,7 +47,9 @@ inline auto coAwait(Executor* ex, Awaitable&& awaitable) {
     return std::forward<Awaitable>(awaitable).coAwait(ex);
 }
 ```
+
 用来获取awaitable对象。`LazyBase`也实现了ValueAwaiter和TryAwaiter。
+
 ### 带参数的noexcept
 如果noexcept(true)，则不会抛出异常，反之则可能有异常。在`LazyPromise`中有：
 ```
@@ -56,6 +58,7 @@ void return_value(V&& value) noexcept(
 _value.template emplace<T>(std::forward<V>(value));
 }
 ```
+
 ### Using-declaration
 这里有个知识点，Lazy的实现中使用了`using Base::Base;`。目的是继承构造函数。通过这种方法，编译器可自动添加父类的构造函数方法。
 ```
@@ -78,6 +81,7 @@ void test()
     D1 e;          // Error: D1 has no default constructor
 }
 ```
+
 ## ThreadPool
 线程池的基本功能都大同小异，获取cpu个数、绑定cpu等等，不一样的地方是这里的ThreadPool实现了指定线程运行函数功能和任务偷取的功能，任务偷取在[work steal线程池](http://www.purecpp.cn/detail?id=2286)中有介绍。这里有一个不明白的地方为什么不执行自己的任务，再偷取别的队列？按正常逻辑应该是自己没任务处理了再偷取其他队列更符合常理啊。
 ## SimpleExecutor
@@ -95,6 +99,7 @@ inline void await_suspend(std::coroutine_handle<> continuation) {
             ...
 }
 ```
+
 这里有一点看不明白，不懂为什么先`address`后`from_address`，为什么不能直接`continuation.promise()`
 
 ## collectAny
@@ -141,6 +146,7 @@ using router_handler_t = std::function<std::optional<std::string>(
   std::string_view, rpc_context<rpc_protocol> &context_info,
   typename rpc_protocol::supported_serialize_protocols protocols)>;
 ```
+
 可以看到`router_handler_t`的定义中没有任何和rpc函数相关的影子，那是因为rpc函数在添加到`handlers_`时通过lambda表达式进行了类型擦除。如下：
 ```
 auto it = handlers_.emplace(
@@ -156,6 +162,7 @@ auto it = handlers_.emplace(
         protocols);
   });
 ```
+
 类型擦除的关键是将rpc函数作为模板参数传入到lambda表达式里面，当执行rpc调用时通过SFINAE技术提取函数参数类型和函数返回类型，比如：
 ```
 template <typename This, typename Return, typename... Arguments>
@@ -165,6 +172,7 @@ struct function_traits<Return (This::*)(Arguments...) const> {
   using class_type = This;
 };
 ```
+
 再通过struck_pack将请求参数反序列化，接着调用rpc函数，最后序列化函数返回值：
 ```
 using param_type = function_parameters_t<T>;
