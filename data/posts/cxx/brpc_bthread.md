@@ -1,3 +1,5 @@
+[TOC]
+
 ## brpc之bthread
 [brpc](https://brpc.incubator.apache.org/zh/docs/rpc-in-depth/consistent-hashing/)中的bthread主要由TaskControl、TaskGroup、TaskMeta三大核心组成。本质上是一个有栈协程池，调用函数在TaskGroup等待执行。为提升性能，bthread通过ObjectPool/ResourcePool资源池优化资源申请效率。
 
