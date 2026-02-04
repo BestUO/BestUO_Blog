@@ -98,5 +98,25 @@
         "excerpt": "使用友元函数/静态成员变量方法，非侵入式的获取类中的私有成员变量",
         "contentFile": "data/posts/cxx/get_private_params.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 11,
+        "title": "协程介绍4 netcan_asyncio",
+        "author": "Thomas Chen",
+        "date": "2026-02-08",
+        "category": "cpp",
+        "excerpt": "netcan_asyncio 协程库关键实现",
+        "contentFile": "data/posts/cxx/coroutines4.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 12,
+        "title": "hook",
+        "author": "Thomas Chen",
+        "date": "2026-02-09",
+        "category": "cpp",
+        "excerpt": "hook 一个sleep函数",
+        "contentFile": "data/posts/cxx/linux_hook.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
