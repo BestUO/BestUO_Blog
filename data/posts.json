@@ -51,12 +51,22 @@
     },
     {
         "id": 6,
-        "title": "core_rpc",
+        "title": "协程介绍2 core_rpc",
         "author": "Thomas Chen",
         "date": "2026-02-04",
         "category": "cpp",
         "excerpt": "简单介绍core_rpc的协程、线程池、执行器、collect_all、collect_any、函数注册器功能",
         "contentFile": "data/posts/cxx/coroutines2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 7,
+        "title": "协程介绍3 c++20 Coroutines",
+        "author": "Thomas Chen",
+        "date": "2026-02-04",
+        "category": "cpp",
+        "excerpt": "简单介绍c++20的协程",
+        "contentFile": "data/posts/cxx/coroutines3.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]

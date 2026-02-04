@@ -72,6 +72,7 @@ void* operator new (std::size_t size, const std::nothrow_t& nothrow_constant) th
 //A *a= new (p)A(); //它本质上是对operator new的重载，定义于#include <new>中。它不分配内存，调用合适的构造函数在ptr所指的地方构造一个对象，之后返回实参指针ptr。new (p)A()调用placement new之后，还会在p上调用`A::A();a->~A();`一旦这个对象使用完毕,必须显式的调用类的析构函数进行销毁对象。但此时内存空间不会被释放，以便其他的对象的构造  
 void* operator new (std::size_t size, void* ptr) throw();
 ```
+
 对于placement operator new []，必须申请比原始对象大小多出sizeof(int)个字节来存放对象的个数:
 ```C++
 // Original code: Fred* p = new Fred[n];
