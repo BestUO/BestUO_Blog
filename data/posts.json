@@ -81,12 +81,22 @@
     },
     {
         "id": 9,
-        "title": "c++20 concept",
+        "title": "concept/requires",
         "author": "Thomas Chen",
         "date": "2026-02-06",
         "category": "cpp",
         "excerpt": "concept/requires 的使用示例",
         "contentFile": "data/posts/cxx/concept_requires.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 10,
+        "title": "获取类中私有变量",
+        "author": "Thomas Chen",
+        "date": "2026-02-07",
+        "category": "cpp",
+        "excerpt": "使用友元函数/静态成员变量方法，非侵入式的获取类中的私有成员变量",
+        "contentFile": "data/posts/cxx/get_private_params.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
