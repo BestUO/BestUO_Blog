@@ -1,3 +1,5 @@
+[TOC]
+
 # 协程1
 
 ## 简介
@@ -9,7 +11,8 @@
 1. [如何在C++17中实现stackless coroutine以及相关的任务调度器](https://zhuanlan.zhihu.com/p/411834453)  
 2. [使用 C 语言实现协程](https://www.chiark.greenend.org.uk/~sgtatham/coroutines.html) [使用 C 语言实现协程(译)](https://mthli.xyz/coroutines-in-c/)
 
-## [云风的协程库](https://github.com/cloudwu/coroutine)
+## 云风的协程库
+[cloudwu/coroutine](https://github.com/cloudwu/coroutine)
 ```c++
 //核心结构体定义
 typedef struct ucontext_t
@@ -72,15 +75,15 @@ coroutine_yield(struct schedule * S) {
 }
 ```
 
-## [libgo](https://github.com/yyzybb537/libgo)
-基于c++11的协程库,协程上下文切换由`libgo_jump_fcontext`和`libgo_make_fcontext`两个函数提供。[libgo](https://github.com/yyzybb537/libgo)大致流程由调度器Scheduler管理所有的processer，processer运行在线程之上处理所有的task，在libgo中task是对coroutinue的封装。
+## libgo
+[libgo](https://github.com/yyzybb537/libgo)基于c++11的协程库,协程上下文切换由`libgo_jump_fcontext`和`libgo_make_fcontext`两个函数提供。[libgo](https://github.com/yyzybb537/libgo)大致流程由调度器Scheduler管理所有的processer，processer运行在线程之上处理所有的task，在libgo中task是对coroutinue的封装。
 * Anys类通过保存Register函数参数的size和align达到保存任意类型的目的。  
 * DispatcherThread线程通过调整runnableQueue_和newQueue_的数量调整各线程负载  
 * channel实现协程间通信，通过`condition_variable pushCv_,popCv_`实现timeout功能。因为channel可以跨线程使用，用mutex进行dequeue的数据同步，所以降低性能。那么一个thread中不同coroutinue之间的数据同步理论上是不需要锁同步的，可以优化这种场景。当channel用于等待协程完成时是不是可用std::packaged_task、std::promise代替？  
 * hook了各种系统函数，非常方便。至于hook demo可以通过[linux hook](http://www.aiecent.com/programs/article/36)简单了解一下。https://blog.csdn.net/whatday/article/details/100185833 https://www.netspi.com/blog/technical/network-penetration-testing/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/ https://www.opensourceforu.com/2011/08/lets-hook-a-library-function/
 
-## [librf](https://github.com/tearshark/librf)
-基于c++20的协程库，用了很多c++新特性,看懂的话需要一定c++基础。
+## librf
+[tearshark/librf](https://github.com/tearshark/librf)基于c++20的协程库，用了很多c++新特性,看懂的话需要一定c++基础。
 
 * 通过`resumef::future_t<int>`获取协程返回值。
 * `when_any`和`when_all`的想法非常好。当后面的多个表达式any或者all成功时立即返回，通过`detail::when_future_t<when_any_pair>`获取any或者all的返回值，学习。

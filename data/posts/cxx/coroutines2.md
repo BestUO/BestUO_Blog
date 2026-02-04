@@ -1,3 +1,5 @@
+[TOC]
+
 # core_rpc之协程模块
 core_rpc中的协程模块使用的是另一个ali的开源库asynic_simple。asynic_simple由c++20中的coroutines实现，所以这里主要介绍asynic_simple的实现结构。async_simple::coro::Lazy是项目中使用最多的协程对象，下面具体分析一下他的代码实现。
 ![Local image](data/posts/img/core_rpc_lazy.png)

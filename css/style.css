@@ -728,13 +728,18 @@ body {
     margin: 0;
 }
 
+.content .toc-list li,
 .toc-list li {
     margin-bottom: 0.4rem;
     line-height: 1.5;
+    padding-left: 0;
+    position: static;
 }
 
+.content .toc-list li::before,
 .toc-list li::before {
     content: none;
+    display: none;
 }
 
 .toc-list a {
@@ -748,11 +753,13 @@ body {
     text-decoration: underline;
 }
 
-/* TOC heading levels */
+/* TOC heading levels - indentation for different heading levels */
+.content .toc-list .toc-level-2,
 .toc-list .toc-level-2 {
     padding-left: 1rem;
 }
 
+.content .toc-list .toc-level-3,
 .toc-list .toc-level-3 {
     padding-left: 2rem;
     font-size: 0.95em;

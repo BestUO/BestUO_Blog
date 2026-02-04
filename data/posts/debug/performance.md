@@ -1,4 +1,7 @@
-## valgrind 
+[TOC]
+
+# 性能分析工具
+## valgrind
 略
 
 ## mtrace
@@ -60,8 +63,8 @@ Cache-misses: cache 失效的次数。
 2. `sudo apt install graphviz ghostscript`
 
 ### 编译选项
+直接使用静态库，防止代码层未引用，gcc不链这个动态库。
 ```
-# cmaklist中直接打静态库进去
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
    target_link_libraries(${PROJECT_NAME} tcmalloc_and_profiler)
 endif()

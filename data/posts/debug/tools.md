@@ -1,3 +1,6 @@
+[TOC]
+
+# debug工具
 ## 生成core
 1. `ulimit -c unlimited`
 2. `sudo sh -c 'echo "core-%e-%p-%t" > /proc/sys/kernel/core_pattern'`
@@ -6,13 +9,15 @@
 1. `gcore pid`
 
 ## strace
-[简单介绍1](https://blog.csdn.net/mijichui2153/article/details/85229307)	
-[简单介绍2](https://www.cnblogs.com/machangwei-8/p/10388883.html)	
-
-* 程序无法启动，通过strace查看执行哪一步时出错		
-strace -o strace.log -tt ./app
-* 线程卡主，查看卡在哪里	
-strace -p 17553
+[简单介绍1](https://blog.csdn.net/mijichui2153/article/details/85229307),[简单介绍2](https://www.cnblogs.com/machangwei-8/p/10388883.html)。通过系统调用的线索，告诉你进程大概在干嘛`strace -o strace.log -tt ./app`。或者指定跟踪某个具体的系统调用：`strace -e trace=xxx -p pid`
+```
+-e trace=file     跟踪和文件访问相关的调用(参数中有文件名)
+-e trace=process  和进程管理相关的调用，比如fork/exec/exit_group
+-e trace=network  和网络通信相关的调用，比如socket/sendto/connect
+-e trace=signal    信号发送和处理相关，比如kill/sigaction
+-e trace=desc  和文件描述符相关，比如write/read/select/epoll等
+-e trace=ipc 进程见同学相关，比如shmget等
+```
 
 ## pstack
 * 查看线程运行位置,跟踪进程栈	
@@ -71,7 +76,8 @@ output:
 * https://www.perfbench.com/
 
 ## 本地耗时分析
-### [nanobench](https://github.com/martinus/nanobench)
+### nanobench
+[官网](https://github.com/martinus/nanobench)
 ```C++
 ankerl::nanobench::Bench().run("DeleteAlarm cost time",[&]()
 {
