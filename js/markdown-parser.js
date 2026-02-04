@@ -1,5 +1,5 @@
 // Enhanced Markdown Parser with comprehensive feature support
-// Supports ordered lists, tables, and mermaid code blocks
+// Supports ordered lists, tables, mermaid code blocks, and [TOC] tag
 
 class MarkdownParser {
     constructor() {
@@ -8,6 +8,68 @@ class MarkdownParser {
         // Unique placeholder to avoid collision with user content
         this.codeBlockPrefix = '\x00__MDPARSE_CODEBLOCK_';
         this.codeBlockSuffix = '__\x00';
+        // TOC placeholder
+        this.tocPlaceholder = '\x00__MDPARSE_TOC__\x00';
+        // Track heading IDs to ensure uniqueness
+        this.headingIds = new Map();
+    }
+    
+    // Generate a unique slug from heading text
+    generateSlug(text) {
+        // Remove HTML tags and trim
+        const cleanText = text.replace(/<[^>]+>/g, '').trim();
+        // Convert to lowercase, replace spaces with hyphens, remove special characters
+        // \u4e00-\u9fa5 represents CJK Unified Ideographs (Chinese characters)
+        let slug = cleanText
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w\u4e00-\u9fa5-]/g, ''); // Keep letters, numbers, Chinese characters, and hyphens
+        
+        // Handle empty slug
+        if (!slug) {
+            slug = 'heading';
+        }
+        
+        // Make slug unique
+        if (this.headingIds.has(slug)) {
+            const count = this.headingIds.get(slug) + 1;
+            this.headingIds.set(slug, count);
+            slug = `${slug}-${count}`;
+        } else {
+            this.headingIds.set(slug, 0);
+        }
+        
+        return slug;
+    }
+    
+    // Extract headings from markdown and generate TOC HTML
+    generateTOC(markdown) {
+        const headings = [];
+        // Match headings: # h1, ## h2, ### h3
+        const headingRegex = /^(#{1,3})\s+(.+)$/gm;
+        let match;
+        
+        while ((match = headingRegex.exec(markdown)) !== null) {
+            const level = match[1].length;
+            const text = match[2].trim();
+            const slug = this.generateSlug(text);
+            headings.push({ level, text, slug });
+        }
+        
+        if (headings.length === 0) {
+            return '';
+        }
+        
+        // Build TOC HTML
+        let tocHtml = '<div class="toc-container">\n<nav class="toc">\n<h4 class="toc-title">目录</h4>\n<ul class="toc-list">\n';
+        
+        headings.forEach(heading => {
+            const indentClass = heading.level > 1 ? ` class="toc-level-${heading.level}"` : '';
+            tocHtml += `<li${indentClass}><a href="#${heading.slug}">${this.escapeHtml(heading.text)}</a></li>\n`;
+        });
+        
+        tocHtml += '</ul>\n</nav>\n</div>';
+        return tocHtml;
     }
     
     escapeHtml(text) {
@@ -225,8 +287,28 @@ class MarkdownParser {
         return buildList(0, 0).html;
     }
     
+    // Reset heading ID tracking for a fresh parse
+    resetHeadingIds() {
+        this.headingIds = new Map();
+    }
+    
     parse(markdown) {
         let html = markdown;
+        
+        // Reset heading IDs for TOC generation
+        this.resetHeadingIds();
+        
+        // Check for [TOC] tag and generate TOC if present
+        const hasToc = /^\[TOC\]$/im.test(markdown);
+        let tocHtml = '';
+        if (hasToc) {
+            tocHtml = this.generateTOC(markdown);
+            // Replace [TOC] with placeholder
+            html = html.replace(/^\[TOC\]$/im, this.tocPlaceholder);
+        }
+        
+        // Reset heading IDs again to generate same IDs for actual headings
+        this.resetHeadingIds();
         
         // Extract code blocks first to protect them
         const codeBlocks = [];
@@ -249,15 +331,18 @@ class MarkdownParser {
         // Parse nested lists (both ordered and unordered with hierarchy support)
         html = this.parseNestedList(html);
         
-        // Headers (must be on their own line)
+        // Headers with ID for anchor links (must be on their own line)
         html = html.replace(/^### (.+)$/gm, (match, text) => {
-            return `<h3>${this.escapeHtml(text)}</h3>`;
+            const slug = this.generateSlug(text);
+            return `<h3 id="${slug}">${this.escapeHtml(text)}</h3>`;
         });
         html = html.replace(/^## (.+)$/gm, (match, text) => {
-            return `<h2>${this.escapeHtml(text)}</h2>`;
+            const slug = this.generateSlug(text);
+            return `<h2 id="${slug}">${this.escapeHtml(text)}</h2>`;
         });
         html = html.replace(/^# (.+)$/gm, (match, text) => {
-            return `<h1>${this.escapeHtml(text)}</h1>`;
+            const slug = this.generateSlug(text);
+            return `<h1 id="${slug}">${this.escapeHtml(text)}</h1>`;
         });
         
         // Inline code (must come before bold/italic)
@@ -289,14 +374,19 @@ class MarkdownParser {
             html = html.replace(placeholder, block);
         });
         
+        // Restore TOC
+        if (hasToc) {
+            html = html.replace(this.tocPlaceholder, tocHtml);
+        }
+        
         // Convert double line breaks to paragraphs
         const lines = html.split('\n\n');
         html = lines.map(block => {
             block = block.trim();
             if (block === '') return '';
             
-            // Don't wrap if already has HTML tags
-            if (block.match(/^<(h[1-6]|ul|ol|table|pre|div)/)) {
+            // Don't wrap if already has HTML tags (including nav for TOC)
+            if (block.match(/^<(h[1-6]|ul|ol|table|pre|div|nav)/)) {
                 return block;
             }
             

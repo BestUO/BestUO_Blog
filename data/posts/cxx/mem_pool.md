@@ -1,3 +1,5 @@
+[TOC]
+
 # Memory pool
 之前简单介绍了brpc中的object pool和resource pool。理论结合实践，这里实现一个简单的版本。
 
