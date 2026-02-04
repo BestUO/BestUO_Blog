@@ -245,6 +245,9 @@ class MarkdownParser {
                 return block;
             }
             
+            // Convert single line breaks to <br> tags for proper HTML display
+            block = block.replace(/\n/g, '<br>');
+            
             return '<p>' + block + '</p>';
         }).join('\n');
         
