@@ -118,5 +118,15 @@
         "excerpt": "hook 一个sleep函数",
         "contentFile": "data/posts/cxx/linux_hook.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 13,
+        "title": "AKShare",
+        "author": "Thomas Chen",
+        "date": "2026-02-10",
+        "category": "trade",
+        "excerpt": "一个股票分析工具库",
+        "contentFile": "data/posts/trade/akshare.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
