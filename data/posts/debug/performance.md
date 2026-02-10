@@ -77,6 +77,8 @@ endif()
 ### 性能分析
 1. `CPUPROFILE=server.prof ./server`
 2. `google-pprof --pdf ./server server.prof > perf.pdf`
+3. `google-pprof --text --alloc_space ../install/iot/lib/iot/iot iot.mem.0507.heap` // 历史内存分配情况
+4. `google-pprof --text --inuse_space ../install/iot/lib/iot/iot iot.mem.0507.heap` // 当前内存使用情况
 
 ### 内存泄漏
 1. `HEAPCHECK=normal ./server`
