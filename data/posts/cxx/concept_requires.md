@@ -31,7 +31,7 @@ int main()
 ```
 
 constraint-expression可使用||、&&
-```c++
+```C++
 template<typename T>
 concept container = std::is_floating_point_v<T> || std::is_integral_v<T>;
 

@@ -1,6 +1,16 @@
 [TOC]
 
 # 性能分析工具
+## cpu性能分析
+1. cpu性能策略:         cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+2. 当前cpu频率策略:     cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
+3. 当前cpu频率:         cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
+4. 当前cpu温度:         cat /sys/class/thermal/thermal_zone*/temp
+## 磁盘性能分析
+1. iostat -x
+## 网络性能分析
+1. netstat -s
+
 ## valgrind
 略
 

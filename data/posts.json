@@ -111,7 +111,7 @@
     },
     {
         "id": 12,
-        "title": "hook",
+        "title": "linux hook",
         "author": "Thomas Chen",
         "date": "2026-02-09",
         "category": "cpp",
@@ -127,6 +127,36 @@
         "category": "trade",
         "excerpt": "一个股票分析工具库",
         "contentFile": "data/posts/trade/akshare.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 14,
+        "title": "struct pack",
+        "author": "Thomas Chen",
+        "date": "2026-03-13",
+        "category": "cpp",
+        "excerpt": "yalantinglibs 中的 struct_pack库,功能类似于boost的serialize,cereal等序列化库",
+        "contentFile": "data/posts/cxx/struct_pack.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 15,
+        "title": "hash algorithm",
+        "author": "Thomas Chen",
+        "date": "2026-03-16",
+        "category": "cpp",
+        "excerpt": "hash 算法记录",
+        "contentFile": "data/posts/cxx/hash algorithm.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 16,
+        "title": "std::result",
+        "author": "Thomas Chen",
+        "date": "2026-03-16",
+        "category": "cpp",
+        "excerpt": "使用std::result来处理函数的返回值, 简化代码逻辑。c++17以后使用std::invoke_result",
+        "contentFile": "data/posts/cxx/std_result.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
