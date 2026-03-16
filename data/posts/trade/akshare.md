@@ -8,6 +8,7 @@
 3. `pip install mplfinance -i https://pypi.tuna.tsinghua.edu.cn/simple`
 4. `pip install lib-pybroker -i https://pypi.tuna.tsinghua.edu.cn/simple`
 5. `pip install akquant -i https://pypi.tuna.tsinghua.edu.cn/simple`
+6. `pip install --upgrade akquant`
 
 ## reference
 1. [asshare repository](https://github.com/akfamily/akshare)

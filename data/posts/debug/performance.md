@@ -6,8 +6,20 @@
 2. 当前cpu频率策略:     cat /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq
 3. 当前cpu频率:         cat /sys/devices/system/cpu/cpu*/cpufreq/cpuinfo_cur_freq
 4. 当前cpu温度:         cat /sys/class/thermal/thermal_zone*/temp
+5.  绑核
+   1. 查看CPU核心数及架构: `lscpu cat`, `/proc/cpuinfo`
+   2. 查看进程当前运行在哪个CPU上（输出的是十六进制掩码）: `taskset -p pid`
+   3. 绑核: `taskset -c 0-3 -p pid`
+
+
 ## 磁盘性能分析
 1. iostat -x
+2. 列出所有磁盘设备: lsblk
+3. 查看磁盘io策略: cat /sys/block/mmcblk0/queue/scheduler
+   * mq-deadline: 对读请求有优先级的保障（默认500ms超时），避免请求“饿死”。
+   * kyber: 调度器会根据实时性能自动调整，旨在提供稳定的延迟。
+   * bfq: 为每个进程分配公平的I/O带宽预算，保证桌面交互流畅性。
+
 ## 网络性能分析
 1. netstat -s
 

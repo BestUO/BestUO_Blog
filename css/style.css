@@ -225,8 +225,8 @@ body {
 .post-list {
     list-style: none;
     padding-left: 0;
-    max-height: 500px;
-    overflow: hidden;
+    max-height: 2000px;
+    overflow-y: auto;
     transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     opacity: 1;
     visibility: visible;
@@ -234,6 +234,7 @@ body {
 
 .category-section.collapsed .post-list {
     max-height: 0;
+    overflow: hidden;
     opacity: 0;
     visibility: hidden;
     margin-bottom: 0;
@@ -377,14 +378,14 @@ body {
     margin-bottom: 1rem;
 }
 
-.content ul > li {
+.content ul>li {
     position: relative;
     padding-left: 1.2rem;
     margin-bottom: 0.5rem;
     line-height: 1.8;
 }
 
-.content ul > li::before {
+.content ul>li::before {
     content: "•";
     position: absolute;
     left: 0;
@@ -401,12 +402,12 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.content ul ul > li::before {
+.content ul ul>li::before {
     content: "◦";
     font-size: 1em;
 }
 
-.content ul ul ul > li::before {
+.content ul ul ul>li::before {
     content: "▪";
     font-size: 0.8em;
 }
@@ -420,7 +421,7 @@ body {
     counter-reset: item;
 }
 
-.content ol > li {
+.content ol>li {
     counter-increment: item;
     margin-bottom: 0.5rem;
     position: relative;
@@ -428,7 +429,7 @@ body {
     line-height: 1.8;
 }
 
-.content ol > li::before {
+.content ol>li::before {
     content: counter(item) ".";
     position: absolute;
     left: 0;
