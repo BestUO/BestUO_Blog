@@ -225,8 +225,8 @@ body {
 .post-list {
     list-style: none;
     padding-left: 0;
-    max-height: 500px;
-    overflow: hidden;
+    max-height: 2000px;
+    overflow-y: auto;
     transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
     opacity: 1;
     visibility: visible;
@@ -234,6 +234,7 @@ body {
 
 .category-section.collapsed .post-list {
     max-height: 0;
+    overflow: hidden;
     opacity: 0;
     visibility: hidden;
     margin-bottom: 0;
