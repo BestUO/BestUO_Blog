@@ -158,5 +158,15 @@
         "excerpt": "使用std::result来处理函数的返回值, 简化代码逻辑。c++17以后使用std::invoke_result",
         "contentFile": "data/posts/cxx/std_result.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 17,
+        "title": "gdb disassemble",
+        "author": "Thomas Chen",
+        "date": "2026-04-02",
+        "category": "debug",
+        "excerpt": "release模式下gdb反汇编查看函数调用关系",
+        "contentFile": "data/posts/debug/gdb_disassemble.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
