@@ -188,5 +188,155 @@
         "excerpt": "一个神奇的技巧，以下代码仅仅计算1+2+3+.....+10000的值...",
         "contentFile": "data/posts/cxx/branch_prediction.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 20,
+        "title": "Attention is all need拙见+Pytorch代码解读",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "在google的这篇文章之前，nlp任务中主流的序列转换模型都是基于CNN或者RNN...",
+        "contentFile": "data/posts/ai/Attention_is_all_need.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 21,
+        "title": "梅尔谱重建语音信号",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "人类对频率的感知并不是线性的，并且对低频信号的感知要比高频信号敏感...",
+        "contentFile": "data/posts/ai/melspectrogram.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 22,
+        "title": "RNN姓名分类1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "字符级的名字分类...",
+        "contentFile": "data/posts/ai/rnn_name_classification1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 23,
+        "title": "RNN姓名分类2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "字符级的名字分类...",
+        "contentFile": "data/posts/ai/rnn_name_classification1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 24,
+        "title": "SV2TTS介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Google2018年发表的论文可以实现VoiceClone...",
+        "contentFile": "data/posts/ai/SV2TTS.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 25,
+        "title": "tacotron1介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Tacotron1模型相当精简，大致可以分为encoder，decoder，postnet三个部分...",
+        "contentFile": "data/posts/ai/tacotron1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 26,
+        "title": "tacotron2介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Tacotron2基于论文[NATURAL TTS SYNTHESIS BY CONDITIONING WAVENET ON MEL SPECTROGRAM PREDICTIONS]。是作者学习的第一篇机器学习论文...",
+        "contentFile": "data/posts/ai/tacotron2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 27,
+        "title": "图像风格迁移1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "图像的风格迁移是一个老课题，但一直没有突破性进展，直到2015年...",
+        "contentFile": "data/posts/ai/image_translate1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 28,
+        "title": "图像风格迁移2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "在说Adain之前先简单介绍一下谷歌的另一篇文章[A learned representation for artistic style]...",
+        "contentFile": "data/posts/ai/image_translate2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 29,
+        "title": "机器翻译",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "自Google发表了transformer之后，机器翻译领域终于迎来了质的飞跃...",
+        "contentFile": "data/posts/ai/machine_translate.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 30,
+        "title": "神经网络小Tips",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "介绍一些神经网络的小技巧...",
+        "contentFile": "data/posts/ai/neural_network_tips.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 31,
+        "title": "零基础入门NLP1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "年前参加了阿里的一个天池大赛喜获72名...",
+        "contentFile": "data/posts/ai/NLP1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 32,
+        "title": "零基础入门NLP2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "上篇文章用facebook的FastText直接进行文本分类...",
+        "contentFile": "data/posts/ai/NLP2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 33,
+        "title": "非成对图像风格转换",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "人头像到二次元卡通图像的风格转换...",
+        "contentFile": "data/posts/ai/unpaired_image_style_transfer.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 34,
+        "title": "预处理方法_tokenizer",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "距离上次发布TTS相关的心得已经2月有余，最近终于闲了下来有时间研究一下NMT...",
+        "contentFile": "data/posts/ai/preprocessing_tokenizer.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]
