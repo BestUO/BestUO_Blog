@@ -174,7 +174,7 @@ auto operator co_await() && {
 }
 ```
 
-通过c++17的推导指南获取GatherAwaiter模板所需的类型[推导指南](http://www.aiecent.com/articleDetail?article_id=49#deduction-guides)
+通过c++17的推导指南获取GatherAwaiter模板所需的类型
 ```c++
 template<concepts::Awaitable... Futs> // C++17 deduction guide
 GatherAwaiter(Futs&&...) -> GatherAwaiter<AwaitResult<Futs>...>;

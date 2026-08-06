@@ -309,6 +309,6 @@ static inline T* unsafe_address_resource(ResourceId<T> id) {
 6. [brpc源码解析](https://blog.csdn.net/wxj1992/category_11267957.html)
 7. [brpc源码学习](https://blog.csdn.net/kidgin7439/category_10022503.html)
 8. [从汇编层面看函数调用的实现原理](https://www.cnblogs.com/abozhang/p/10788396.html)
-9. [再谈FreeLockQueue](http://www.aiecent.com/articleDetail?article_id=38)
+9. [再谈FreeLockQueue](https://www.aiecent.com/post.html?id=18)
 10. [百度C++工程师的那些极限优化](https://blog.csdn.net/weixin_41055260/article/details/118716132)
 11. [bRPC的精华全在bthread上啦](https://zhuanlan.zhihu.com/p/294129746)

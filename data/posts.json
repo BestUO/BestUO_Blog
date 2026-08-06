@@ -168,5 +168,25 @@
         "excerpt": "release模式下gdb反汇编查看函数调用关系",
         "contentFile": "data/posts/debug/gdb_disassemble.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 18,
+        "title": "free lock queue",
+        "author": "Thomas Chen",
+        "date": "2026-06-26",
+        "category": "cpp",
+        "excerpt": "再谈性能优化",
+        "contentFile": "data/posts/cxx/free_lock_queue.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 19,
+        "title": "循环展开和分支预测",
+        "author": "Thomas Chen",
+        "date": "2026-08-06",
+        "category": "cpp",
+        "excerpt": "一个神奇的技巧，以下代码仅仅计算1+2+3+.....+10000的值...",
+        "contentFile": "data/posts/cxx/branch_prediction.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]

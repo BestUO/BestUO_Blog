@@ -80,7 +80,7 @@ coroutine_yield(struct schedule * S) {
 * Anys类通过保存Register函数参数的size和align达到保存任意类型的目的。  
 * DispatcherThread线程通过调整runnableQueue_和newQueue_的数量调整各线程负载  
 * channel实现协程间通信，通过`condition_variable pushCv_,popCv_`实现timeout功能。因为channel可以跨线程使用，用mutex进行dequeue的数据同步，所以降低性能。那么一个thread中不同coroutinue之间的数据同步理论上是不需要锁同步的，可以优化这种场景。当channel用于等待协程完成时是不是可用std::packaged_task、std::promise代替？  
-* hook了各种系统函数，非常方便。至于hook demo可以通过[linux hook](http://www.aiecent.com/programs/article/36)简单了解一下。https://blog.csdn.net/whatday/article/details/100185833 https://www.netspi.com/blog/technical/network-penetration-testing/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/ https://www.opensourceforu.com/2011/08/lets-hook-a-library-function/
+* hook了各种系统函数，非常方便。至于hook demo可以通过[linux hook](https://www.aiecent.com/post.html?id=12)简单了解一下。https://blog.csdn.net/whatday/article/details/100185833 https://www.netspi.com/blog/technical/network-penetration-testing/function-hooking-part-i-hooking-shared-library-function-calls-in-linux/ https://www.opensourceforu.com/2011/08/lets-hook-a-library-function/
 
 ## librf
 [tearshark/librf](https://github.com/tearshark/librf)基于c++20的协程库，用了很多c++新特性,看懂的话需要一定c++基础。
