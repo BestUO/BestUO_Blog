@@ -28,15 +28,142 @@
 1. iostat -x
 2. 列出所有磁盘设备: lsblk
 3. 查看磁盘io策略: cat /sys/block/mmcblk0/queue/scheduler
-   * mq-deadline: 对读请求有优先级的保障（默认500ms超时），避免请求“饿死”。
+   * mq-deadline: 对读请求有优先级的保障（默认500ms超时），避免请求"饿死"。
    * kyber: 调度器会根据实时性能自动调整，旨在提供稳定的延迟。
    * bfq: 为每个进程分配公平的I/O带宽预算，保证桌面交互流畅性。
 4. 查看磁盘io性能: `sudo iotop -o -p pid` 监控指定进程的磁盘io性能，`-o`选项只显示有io操作的进程，`-p`选项指定监控的进程pid。
 5. pidstat -d 1 -p pid 监控指定进程的磁盘io性能，`-d`选项显示磁盘io统计信息，`1`表示每秒刷新一次数据，`-p`选项指定监控的进程pid。
 
+### iostat -x 使用示例
+```
+iostat -x 1
+```
+每秒刷新一次，显示所有磁盘的扩展统计信息。关键字段：
+
+| 字段 | 含义 |
+| :--- | :--- |
+| `%util` | 该磁盘设备的繁忙程度（接近100%说明磁盘是瓶颈） |
+| `r/s` `w/s` | 每秒读/写请求数（IOPS） |
+| `rkB/s` `wkB/s` | 每秒读/写的数据量 |
+| `await` | IO请求的平均等待时间（ms），包括排队+处理时间 |
+| `r_await` `w_await` | 分别是读、写请求的平均等待时间 |
+| `avgqu-sz` | 平均IO队列长度，越大说明请求堆积越严重 |
+| `svctm` | 平均每次IO请求的服务时间（较老版本才有，新版建议看await） |
+
+常用组合：
+```
+iostat -x 1 5             # 每秒刷新，共采样5次
+iostat -x -d mmcblk0 1    # 只看指定设备
+```
+判断磁盘瓶颈：`%util` 持续接近100% 且 `await` 明显偏高，说明磁盘IO是性能瓶颈；如果 `%util` 高但 `await` 低，说明只是吞吐量大但响应正常。
+
 ## 网络性能分析
 1. netstat -s
 2. iftop
+
+### netstat -s 使用示例
+```
+netstat -s
+```
+输出按协议分类的统计信息（IP/ICMP/TCP/UDP），无需指定间隔，是累计计数器（从系统启动或计数器归零算起）。常关注的部分：
+
+```
+Tcp:
+    ... segments retransmitted        # TCP重传次数，过高说明网络质量差或对端处理慢
+    ... resets sent/received          # 连接被重置的次数
+    ... times used SACK for repair    # SACK恢复使用次数
+Udp:
+    ... packet receive errors         # UDP接收错误（常见于接收buffer溢出）
+    ... receive buffer errors
+    ... send buffer errors
+```
+
+常用排查思路：
+```
+netstat -s | grep -i retrans          # 只看重传相关，判断网络是否丢包严重
+netstat -s | grep -i "listen drops"   # 查看是否有连接因accept队列满被丢弃
+netstat -s | grep -i "buffer errors"  # 查看是否有UDP收发缓冲区不足的问题
+
+//  结合时间间隔观察增量（两次采样做差，比看累计值更直观）
+netstat -s > /tmp/s1; sleep 5; netstat -s > /tmp/s2; diff /tmp/s1 /tmp/s2
+```
+
+### iftop 使用示例
+```
+sudo iftop -i eth0
+```
+实时显示指定网卡上各连接的带宽占用，类似"网络版的top"。常用参数：
+
+| 参数 | 含义 |
+| :--- | :--- |
+| `-i <iface>` | 指定要监控的网卡 |
+| `-n` | 不对IP做DNS反查（避免卡顿，排查时建议加上） |
+| `-P` | 显示端口号 |
+| `-N` | 不将端口号转换为服务名（配合-P更直观） |
+| `-B` | 以字节（Byte）而非比特（bit）为单位显示 |
+
+常用组合：
+```
+sudo iftop -i eth0 -nNP     # 不做DNS/端口名反查，显示端口号，排查具体是哪个连接占满带宽
+```
+交互操作：运行后按 `t` 切换显示模式（含/不含端口），按 `p` 切换端口显示，按 `q` 退出。界面上半部分显示当前活跃连接及其实时/2s/10s平均带宽，下半部分显示总流量统计（TX/RX/TOTAL）。
+
+## sar
+`sar`（System Activity Reporter，属于 sysstat 包）可以对 CPU、内存、磁盘、网络等多个维度做统一的历史/实时监控，语法统一为 `sar [参数] [间隔秒数] [采样次数]`。
+
+### 安装与开启历史采集
+```
+sudo apt-get install sysstat
+sudo systemctl enable --now sysstat   # 开启后台定时采集，供事后回溯
+```
+开启后，`/var/log/sysstat/`（或 `/var/log/sa/`）下会按天生成数据文件（如 `sa06`），即使问题已经过去，也能用 `sar -f /var/log/sysstat/sa06` 回溯当天的历史数据。
+
+### CPU
+```
+sar -u 1 5          # 每秒采样一次，共5次，查看CPU使用率
+sar -u -P ALL 1     # 查看每个核心分别的CPU使用率（-P ALL）
+sar -u -P 0 1       # 只看0号核心
+```
+关键字段：`%user`（用户态）、`%system`（内核态）、`%iowait`（等待IO的CPU空闲占比，偏高说明IO是瓶颈）、`%idle`（空闲）。
+
+```
+sar -q 1 5          # 查看系统平均负载（runq-sz运行队列长度、load average）
+```
+
+### 内存
+```
+sar -r 1 5          # 查看内存使用情况（%memused、kbcommit、kbbuffers、kbcached等）
+sar -R 1 5          # 查看内存变化速率（页分配/释放速率）
+sar -B 1 5          # 查看换页（swap）活动：pgpgin/s、pgpgout/s、majflt/s（缺页异常率）
+sar -S 1 5          # 查看swap空间使用情况
+```
+
+### 磁盘 IO
+```
+sar -d -p 1 5       # 查看各磁盘设备IO情况，-p使用可读设备名而非dev编号
+```
+关键字段：`tps`（每秒IO请求数）、`rkB/s`/`wkB/s`（读写吞吐）、`await`（平均等待时间）、`%util`（设备繁忙度），与 `iostat -x` 含义基本一致，适合长期趋势对照。
+
+### 网络
+```
+sar -n DEV 1 5      # 查看各网卡的收发流量（rxkB/s、txkB/s、rxpck/s、txpck/s）
+sar -n EDEV 1 5     # 查看网卡错误统计（rxerr/s、txerr/s、rxdrop/s等）
+sar -n TCP,ETCP 1 5 # 查看TCP连接及错误统计（active/s主动连接数、retrans/s重传数）
+sar -n SOCK 1 5     # 查看socket使用情况（totsck总数、tcpsck、udpsck等）
+```
+
+### 进程上下文切换与中断
+```
+sar -w 1 5          # 每秒上下文切换次数（cswch/s）和进程创建速率（proc/s）
+sar -I SUM 1 5       # 查看所有中断总数
+```
+
+### 回溯历史数据
+```
+sar -u -f /var/log/sysstat/sa06                # 回看指定日期的CPU历史数据
+sar -r -s 09:00:00 -e 10:00:00 -f /var/log/sysstat/sa06   # 只看某个时间段（-s起始 -e结束）
+```
+排查思路：出问题时若没有实时监控在跑，第一时间用 `sar -f` 结合 `-s/-e` 圈定时间窗口，往往能定位到当时是CPU、内存、磁盘还是网络出现异常，再用 `pidstat`/`iostat`/`iftop` 等工具进一步定位到具体进程或连接。
 
 ## valgrind
 略
