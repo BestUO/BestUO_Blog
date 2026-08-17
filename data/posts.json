@@ -1,172 +1,172 @@
 [
     {
-        "id": 1,
-        "title": "性能分析",
+        "id": 35,
+        "title": "类型擦除：任意类型函数的注册与调用",
         "author": "Thomas Chen",
-        "date": "2026-01-29",
-        "category": "debug",
-        "excerpt": "性能/内存分析示例",
-        "contentFile": "data/posts/debug/performance.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 2,
-        "title": "debug常用工具",
-        "author": "Thomas Chen",
-        "date": "2026-01-30",
-        "category": "debug",
-        "excerpt": "debug常用工具介绍",
-        "contentFile": "data/posts/debug/tools.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 3,
-        "title": "brpc bthread 解读",
-        "author": "Thomas Chen",
-        "date": "2026-01-31",
+        "date": "2026-08-17",
         "category": "cpp",
-        "excerpt": "brpc bthread 解读",
-        "contentFile": "data/posts/cxx/brpc_bthread.md",
+        "excerpt": "实现一个function executor，支持任意类型的函数调用...",
+        "contentFile": "data/posts/cxx/type_erase.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
-        "id": 4,
-        "title": "mem pool",
+        "id": 34,
+        "title": "预处理方法_tokenizer",
         "author": "Thomas Chen",
-        "date": "2026-02-01",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "距离上次发布TTS相关的心得已经2月有余，最近终于闲了下来有时间研究一下NMT...",
+        "contentFile": "data/posts/ai/preprocessing_tokenizer.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 33,
+        "title": "非成对图像风格转换",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "人头像到二次元卡通图像的风格转换...",
+        "contentFile": "data/posts/ai/unpaired_image_style_transfer.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 32,
+        "title": "零基础入门NLP2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "上篇文章用facebook的FastText直接进行文本分类...",
+        "contentFile": "data/posts/ai/NLP2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 31,
+        "title": "零基础入门NLP1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "年前参加了阿里的一个天池大赛喜获72名...",
+        "contentFile": "data/posts/ai/NLP1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 30,
+        "title": "神经网络小Tips",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "介绍一些神经网络的小技巧...",
+        "contentFile": "data/posts/ai/neural_network_tips.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 29,
+        "title": "机器翻译",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "自Google发表了transformer之后，机器翻译领域终于迎来了质的飞跃...",
+        "contentFile": "data/posts/ai/machine_translate.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 28,
+        "title": "图像风格迁移2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "在说Adain之前先简单介绍一下谷歌的另一篇文章[A learned representation for artistic style]...",
+        "contentFile": "data/posts/ai/image_translate2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 27,
+        "title": "图像风格迁移1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "图像的风格迁移是一个老课题，但一直没有突破性进展，直到2015年...",
+        "contentFile": "data/posts/ai/image_translate1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 26,
+        "title": "tacotron2介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Tacotron2基于论文[NATURAL TTS SYNTHESIS BY CONDITIONING WAVENET ON MEL SPECTROGRAM PREDICTIONS]。是作者学习的第一篇机器学习论文...",
+        "contentFile": "data/posts/ai/tacotron2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 25,
+        "title": "tacotron1介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Tacotron1模型相当精简，大致可以分为encoder，decoder，postnet三个部分...",
+        "contentFile": "data/posts/ai/tacotron1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 24,
+        "title": "SV2TTS介绍",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "Google2018年发表的论文可以实现VoiceClone...",
+        "contentFile": "data/posts/ai/SV2TTS.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 23,
+        "title": "RNN姓名分类2",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "字符级的名字分类...",
+        "contentFile": "data/posts/ai/rnn_name_classification1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 22,
+        "title": "RNN姓名分类1",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "字符级的名字分类...",
+        "contentFile": "data/posts/ai/rnn_name_classification1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 21,
+        "title": "梅尔谱重建语音信号",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "人类对频率的感知并不是线性的，并且对低频信号的感知要比高频信号敏感...",
+        "contentFile": "data/posts/ai/melspectrogram.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 20,
+        "title": "Attention is all need拙见+Pytorch代码解读",
+        "author": "Thomas Chen",
+        "date": "2022-08-06",
+        "category": "ai",
+        "excerpt": "在google的这篇文章之前，nlp任务中主流的序列转换模型都是基于CNN或者RNN...",
+        "contentFile": "data/posts/ai/Attention_is_all_need.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 19,
+        "title": "循环展开和分支预测",
+        "author": "Thomas Chen",
+        "date": "2026-08-06",
         "category": "cpp",
-        "excerpt": "200行写一个mempool",
-        "contentFile": "data/posts/cxx/mem_pool.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 5,
-        "title": "协程介绍1",
-        "author": "Thomas Chen",
-        "date": "2026-02-03",
-        "category": "cpp",
-        "excerpt": "协程的基本概念和实现",
-        "contentFile": "data/posts/cxx/coroutines1.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 6,
-        "title": "协程介绍2 core_rpc",
-        "author": "Thomas Chen",
-        "date": "2026-02-04",
-        "category": "cpp",
-        "excerpt": "简单介绍core_rpc的协程、线程池、执行器、collect_all、collect_any、函数注册器功能",
-        "contentFile": "data/posts/cxx/coroutines2.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 7,
-        "title": "协程介绍3 c++20 Coroutines",
-        "author": "Thomas Chen",
-        "date": "2026-02-04",
-        "category": "cpp",
-        "excerpt": "简单介绍c++20的协程",
-        "contentFile": "data/posts/cxx/coroutines3.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 8,
-        "title": "cinatra",
-        "author": "Thomas Chen",
-        "date": "2026-02-05",
-        "category": "cpp",
-        "excerpt": "cinatra 使用流程梳理",
-        "contentFile": "data/posts/cxx/cinatra.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 9,
-        "title": "concept/requires",
-        "author": "Thomas Chen",
-        "date": "2026-02-06",
-        "category": "cpp",
-        "excerpt": "concept/requires 的使用示例",
-        "contentFile": "data/posts/cxx/concept_requires.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 10,
-        "title": "获取类中私有变量",
-        "author": "Thomas Chen",
-        "date": "2026-02-07",
-        "category": "cpp",
-        "excerpt": "使用友元函数/静态成员变量方法，非侵入式的获取类中的私有成员变量",
-        "contentFile": "data/posts/cxx/get_private_params.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 11,
-        "title": "协程介绍4 netcan_asyncio",
-        "author": "Thomas Chen",
-        "date": "2026-02-08",
-        "category": "cpp",
-        "excerpt": "netcan_asyncio 协程库关键实现",
-        "contentFile": "data/posts/cxx/coroutines4.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 12,
-        "title": "linux hook",
-        "author": "Thomas Chen",
-        "date": "2026-02-09",
-        "category": "cpp",
-        "excerpt": "hook 一个sleep函数",
-        "contentFile": "data/posts/cxx/linux_hook.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 13,
-        "title": "AKShare",
-        "author": "Thomas Chen",
-        "date": "2026-02-10",
-        "category": "trade",
-        "excerpt": "一个股票分析工具库",
-        "contentFile": "data/posts/trade/akshare.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 14,
-        "title": "struct pack",
-        "author": "Thomas Chen",
-        "date": "2026-03-13",
-        "category": "cpp",
-        "excerpt": "yalantinglibs 中的 struct_pack库,功能类似于boost的serialize,cereal等序列化库",
-        "contentFile": "data/posts/cxx/struct_pack.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 15,
-        "title": "hash algorithm",
-        "author": "Thomas Chen",
-        "date": "2026-03-16",
-        "category": "cpp",
-        "excerpt": "hash 算法记录",
-        "contentFile": "data/posts/cxx/hash_algorithm.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 16,
-        "title": "std::result",
-        "author": "Thomas Chen",
-        "date": "2026-03-16",
-        "category": "cpp",
-        "excerpt": "使用std::result来处理函数的返回值, 简化代码逻辑。c++17以后使用std::invoke_result",
-        "contentFile": "data/posts/cxx/std_result.md",
-        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
-    },
-    {
-        "id": 17,
-        "title": "gdb disassemble",
-        "author": "Thomas Chen",
-        "date": "2026-04-02",
-        "category": "debug",
-        "excerpt": "release模式下gdb反汇编查看函数调用关系",
-        "contentFile": "data/posts/debug/gdb_disassemble.md",
+        "excerpt": "一个神奇的技巧，以下代码仅仅计算1+2+3+.....+10000的值...",
+        "contentFile": "data/posts/cxx/branch_prediction.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
@@ -180,13 +180,173 @@
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     },
     {
-        "id": 19,
-        "title": "循环展开和分支预测",
+        "id": 17,
+        "title": "gdb disassemble",
         "author": "Thomas Chen",
-        "date": "2026-08-06",
+        "date": "2026-04-02",
+        "category": "debug",
+        "excerpt": "release模式下gdb反汇编查看函数调用关系",
+        "contentFile": "data/posts/debug/gdb_disassemble.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 16,
+        "title": "std::result",
+        "author": "Thomas Chen",
+        "date": "2026-03-16",
         "category": "cpp",
-        "excerpt": "一个神奇的技巧，以下代码仅仅计算1+2+3+.....+10000的值...",
-        "contentFile": "data/posts/cxx/branch_prediction.md",
+        "excerpt": "使用std::result来处理函数的返回值, 简化代码逻辑。c++17以后使用std::invoke_result",
+        "contentFile": "data/posts/cxx/std_result.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 15,
+        "title": "hash algorithm",
+        "author": "Thomas Chen",
+        "date": "2026-03-16",
+        "category": "cpp",
+        "excerpt": "hash 算法记录",
+        "contentFile": "data/posts/cxx/hash_algorithm.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 14,
+        "title": "struct pack",
+        "author": "Thomas Chen",
+        "date": "2026-03-13",
+        "category": "cpp",
+        "excerpt": "yalantinglibs 中的 struct_pack库,功能类似于boost的serialize,cereal等序列化库",
+        "contentFile": "data/posts/cxx/struct_pack.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 13,
+        "title": "AKShare",
+        "author": "Thomas Chen",
+        "date": "2026-02-10",
+        "category": "trade",
+        "excerpt": "一个股票分析工具库",
+        "contentFile": "data/posts/trade/akshare.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 12,
+        "title": "linux hook",
+        "author": "Thomas Chen",
+        "date": "2026-02-09",
+        "category": "cpp",
+        "excerpt": "hook 一个sleep函数",
+        "contentFile": "data/posts/cxx/linux_hook.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 11,
+        "title": "协程介绍4 netcan_asyncio",
+        "author": "Thomas Chen",
+        "date": "2026-02-08",
+        "category": "cpp",
+        "excerpt": "netcan_asyncio 协程库关键实现",
+        "contentFile": "data/posts/cxx/coroutines4.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 10,
+        "title": "获取类中私有变量",
+        "author": "Thomas Chen",
+        "date": "2026-02-07",
+        "category": "cpp",
+        "excerpt": "使用友元函数/静态成员变量方法，非侵入式的获取类中的私有成员变量",
+        "contentFile": "data/posts/cxx/get_private_params.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 9,
+        "title": "concept/requires",
+        "author": "Thomas Chen",
+        "date": "2026-02-06",
+        "category": "cpp",
+        "excerpt": "concept/requires 的使用示例",
+        "contentFile": "data/posts/cxx/concept_requires.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 8,
+        "title": "cinatra",
+        "author": "Thomas Chen",
+        "date": "2026-02-05",
+        "category": "cpp",
+        "excerpt": "cinatra 使用流程梳理",
+        "contentFile": "data/posts/cxx/cinatra.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 7,
+        "title": "协程介绍3 c++20 Coroutines",
+        "author": "Thomas Chen",
+        "date": "2026-02-04",
+        "category": "cpp",
+        "excerpt": "简单介绍c++20的协程",
+        "contentFile": "data/posts/cxx/coroutines3.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 6,
+        "title": "协程介绍2 core_rpc",
+        "author": "Thomas Chen",
+        "date": "2026-02-04",
+        "category": "cpp",
+        "excerpt": "简单介绍core_rpc的协程、线程池、执行器、collect_all、collect_any、函数注册器功能",
+        "contentFile": "data/posts/cxx/coroutines2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 5,
+        "title": "协程介绍1",
+        "author": "Thomas Chen",
+        "date": "2026-02-03",
+        "category": "cpp",
+        "excerpt": "协程的基本概念和实现",
+        "contentFile": "data/posts/cxx/coroutines1.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 4,
+        "title": "mem pool",
+        "author": "Thomas Chen",
+        "date": "2026-02-01",
+        "category": "cpp",
+        "excerpt": "200行写一个mempool",
+        "contentFile": "data/posts/cxx/mem_pool.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 3,
+        "title": "brpc bthread 解读",
+        "author": "Thomas Chen",
+        "date": "2026-01-31",
+        "category": "cpp",
+        "excerpt": "brpc bthread 解读",
+        "contentFile": "data/posts/cxx/brpc_bthread.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 2,
+        "title": "debug常用工具",
+        "author": "Thomas Chen",
+        "date": "2026-01-30",
+        "category": "debug",
+        "excerpt": "debug常用工具介绍",
+        "contentFile": "data/posts/debug/tools.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
+        "id": 1,
+        "title": "性能分析",
+        "author": "Thomas Chen",
+        "date": "2026-01-29",
+        "category": "debug",
+        "excerpt": "性能/内存分析示例",
+        "contentFile": "data/posts/debug/performance.md",
         "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
     }
 ]

@@ -49,7 +49,7 @@
 2. `cat /proc/pid/smaps` 查看内存块具体开始结束位置
 3. `gdb -p pid`
 4. `dump binary memory ./mem.bin 0x7fa1d0b57000 0x7FA1D0B70000` 导出内存块
-5. `hexdump -Cv mem.bin` 查看内存块内容
+5. `hexdump -Cv mem.bin` 查看内存块内容 or `strings -a -t x -n 8 mem.bin`
 
 ## Perf
 [介绍1](https://blog.csdn.net/runafterhit/article/details/107801860),[介绍2](https://blog.csdn.net/jasonactions/article/details/109332167)。
@@ -96,8 +96,32 @@ Cache-misses: cache 失效的次数。
 
 ## gperftools
 ### 安装
+#### apt-get 安装
 1. `sudo apt-get install google-perftools libgoogle-perftools-dev`
 2. `sudo apt install graphviz ghostscript`
+#### 源码安装
+1. git clone https://github.com/gperftools/gperftools.git
+2. cd gperftools
+3. ./autogen.sh
+4. mkdir build && cd build
+5. ../configure --prefix=${PWD}/../install CXXFLAGS="-O3" CFLAGS="-O3"
+6. make -j4 && make install
+
+### 检查内存泄漏
+```
+LD_PRELOAD=/path/to/libtcmalloc.so HEAPPROFILE=/tmp/leak_test HEAP_PROFILE_TIME_INTERVAL=5 ./your_progress
+
+export GOPROXY=https://goproxy.cn,direct
+go install github.com/google/pprof@latest
+export PATH=$PATH:$(go env GOPATH)/bin
+pprof --base=/tmp/leak_test.0002.heap \
+  --text \
+  ./your_progress \
+  /tmp/leak_test.0005.heap
+
+pprof --text ./your_progress /tmp/leak_test.0001.heap
+pprof --text ./your_progress /tmp/leak_test.0005.heap
+```
 
 ### 编译选项
 直接使用静态库，防止代码层未引用，gcc不链这个动态库。
