@@ -613,12 +613,20 @@ body {
     background-color: #f9f9f9;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    text-align: center;
+    overflow-x: auto;
 }
 
 .mermaid {
-    display: inline-block;
-    margin: 0 auto;
+    display: block;
+    width: 100%;
+    min-width: 720px;
+}
+
+.mermaid svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none;
 }
 
 .mermaid-fallback {
@@ -764,4 +772,10 @@ body {
 .toc-list .toc-level-3 {
     padding-left: 2rem;
     font-size: 0.95em;
+}
+
+.content .toc-list .toc-level-4,
+.toc-list .toc-level-4 {
+    padding-left: 3rem;
+    font-size: 0.9em;
 }
