@@ -1,5 +1,15 @@
 [
     {
+        "id": 36,
+        "title": "分布式通信中间件",
+        "author": "Thomas Chen",
+        "date": "2026-08-17",
+        "category": "cpp",
+        "excerpt": "从网络和共享内存两个角度介绍分布式通信中间件的设计与实现...",
+        "contentFile": "data/posts/cxx/distributed_communication_middleware.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
         "id": 35,
         "title": "类型擦除：任意类型函数的注册与调用",
         "author": "Thomas Chen",

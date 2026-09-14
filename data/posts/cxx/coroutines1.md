@@ -91,8 +91,8 @@ coroutine_yield(struct schedule * S) {
 * 项目中有asio相关的协程改造代码，没看明白怎么用。
 
 ## 几个开源协程库
-1. [cppcore](https://github.com/lewissbaker/cppcoro  )
-2. [libco](https://github.com/Tencent/libco/  )
+1. [cppcore](https://github.com/lewissbaker/cppcoro)
+2. [libco](https://github.com/Tencent/libco)
 3. [libgo](https://github.com/yyzybb537/libgo)
 4. [librf](https://github.com/tearshark/librf)
 5. [copp](https://github.com/owent/libcopp)

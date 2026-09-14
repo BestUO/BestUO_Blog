@@ -45,15 +45,17 @@ class MarkdownParser {
     // Extract headings from markdown and generate TOC HTML
     generateTOC(markdown) {
         const headings = [];
-        // Match headings: # h1, ## h2, ### h3
-        const headingRegex = /^(#{1,3})\s+(.+)$/gm;
+        // Match headings: # h1, ## h2, ### h3, #### h4
+        const headingRegex = /^(#{1,4})\s+(.+)$/gm;
         let match;
         
         while ((match = headingRegex.exec(markdown)) !== null) {
             const level = match[1].length;
             const text = match[2].trim();
             const slug = this.generateSlug(text);
-            headings.push({ level, text, slug });
+            if (level <= 3) {
+                headings.push({ level, text, slug });
+            }
         }
         
         if (headings.length === 0) {
@@ -64,8 +66,8 @@ class MarkdownParser {
         let tocHtml = '<div class="toc-container">\n<nav class="toc">\n<h4 class="toc-title">目录</h4>\n<ul class="toc-list">\n';
         
         headings.forEach(heading => {
-            const indentClass = heading.level > 1 ? ` class="toc-level-${heading.level}"` : '';
-            tocHtml += `<li${indentClass}><a href="#${heading.slug}">${this.escapeHtml(heading.text)}</a></li>\n`;
+            const indentClass = heading.level > 1 ? ` toc-level-${heading.level}` : '';
+            tocHtml += `<li class="toc-entry${indentClass}" data-level="${heading.level}"><a href="#${heading.slug}">${this.escapeHtml(heading.text)}</a></li>\n`;
         });
         
         tocHtml += '</ul>\n</nav>\n</div>';
@@ -315,7 +317,7 @@ class MarkdownParser {
         html = html.replace(/```([a-zA-Z0-9_+#.-]*)?\n([\s\S]+?)```/g, (match, lang, code) => {
             const placeholder = `${this.codeBlockPrefix}${codeBlocks.length}${this.codeBlockSuffix}`;
             if (lang === 'mermaid') {
-                codeBlocks.push(`<div class="mermaid-container"><div class="mermaid">${this.escapeHtml(code)}</div></div>`);
+                codeBlocks.push(`<div class="mermaid-container"><div class="mermaid"><pre>${this.escapeHtml(code)}</pre></div></div>`);
             } else {
                 const langClass = lang ? ` class="language-${lang}"` : '';
                 codeBlocks.push(`<pre><code${langClass}>${this.escapeHtml(code)}</code></pre>`);
@@ -332,17 +334,10 @@ class MarkdownParser {
         html = this.parseNestedList(html);
         
         // Headers with ID for anchor links (must be on their own line)
-        html = html.replace(/^### (.+)$/gm, (match, text) => {
+        html = html.replace(/^(#{1,4})\s+(.+)$/gm, (match, hashes, text) => {
+            const level = hashes.length;
             const slug = this.generateSlug(text);
-            return `<h3 id="${slug}">${this.escapeHtml(text)}</h3>`;
-        });
-        html = html.replace(/^## (.+)$/gm, (match, text) => {
-            const slug = this.generateSlug(text);
-            return `<h2 id="${slug}">${this.escapeHtml(text)}</h2>`;
-        });
-        html = html.replace(/^# (.+)$/gm, (match, text) => {
-            const slug = this.generateSlug(text);
-            return `<h1 id="${slug}">${this.escapeHtml(text)}</h1>`;
+            return `<h${level} id="${slug}">${this.escapeHtml(text)}</h${level}>`;
         });
         
         // Inline code (must come before bold/italic)
@@ -368,12 +363,6 @@ class MarkdownParser {
             return `<a href="${sanitizedUrl}">${text}</a>`;
         });
         
-        // Restore code blocks
-        codeBlocks.forEach((block, index) => {
-            const placeholder = `${this.codeBlockPrefix}${index}${this.codeBlockSuffix}`;
-            html = html.replace(placeholder, block);
-        });
-        
         // Restore TOC
         if (hasToc) {
             html = html.replace(this.tocPlaceholder, tocHtml);
@@ -395,6 +384,12 @@ class MarkdownParser {
             
             return '<p>' + block + '</p>';
         }).join('\n');
+
+        // Restore code blocks after paragraph formatting so their whitespace is preserved
+        codeBlocks.forEach((block, index) => {
+            const placeholder = `${this.codeBlockPrefix}${index}${this.codeBlockSuffix}`;
+            html = html.replace(placeholder, block);
+        });
         
         return html;
     }
