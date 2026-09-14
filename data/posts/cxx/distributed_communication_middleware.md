@@ -1,7 +1,7 @@
 [TOC]
 # 基于服务发现的通信中间件
 
-服务端可以通过 `topic/message_pattern` 注册服务，客户端可以通过相同的键发现服务并订阅。这样就不需要提前约定端到端的通信地址，服务端和客户端都可以动态加入和退出。服务发现的核心是维护一份注册表。
+通信端点可以通过服务名、Topic、消息模式或类型信息描述自身能力，其他端点再通过相同的标识发现并建立连接。这样不需要预先写死端到端地址，通信双方可以动态加入和退出。发现信息既可以保存在逻辑中心化的注册中心，也可以通过组播、Gossip 或本机共享元数据在节点间直接传播，因此“维护一份中心注册表”并不是所有通信中间件的共同前提。
 
 ## 中心化的服务发现
 
@@ -9,9 +9,9 @@
 
 这种方式实现简单，服务注册和查询的职责也比较清晰，但中心节点本身成为系统的关键依赖。中心节点故障时，服务端无法注册，客户端也无法发现新的服务；因此还需要为中心节点提供高可用部署、故障转移和数据持久化能力。
 
-## 去中心化的服务发现
+## 基于高可用注册中心的服务发现
 
-去中心化服务发现的目标是消除单个注册中心节点的单点故障。实际系统通常由多个节点组成一个一致性集群.
+注册中心可以通过多个节点组成一致性集群，消除单个服务器的故障点。这里的“多节点”指注册表服务自身采用复制和选主实现高可用；从客户端视角看，它仍然是一个逻辑中心化的注册中心，并不等同于节点之间直接互相发现的无中心架构。
 
 ### etcd
 
@@ -21,7 +21,7 @@ etcd 使用 Raft 同时完成 leader 选举和日志复制，注册表数据会�
 
 ### BestUO::Raft
 
-[BestUO::Raft](https://github.com/BestUO/littletools/tree/master/tools/raft) 单独实现了raft算法的核心功能：选举。它只处理 `HEARTBEAT`、`VOTE` 和 `VOTERESPONSE` 三类实际会被 `HandleData()` 分发的消息.
+[BestUO::Raft](https://github.com/BestUO/littletools/tree/master/tools/raft) 实现的是一种受 Raft 启发的 leader election，而不是完整的 Raft 共识算法。它只处理 `HEARTBEAT`、`VOTE` 和 `VOTERESPONSE` 三类实际会被 `HandleData()` 分发的消息；没有实现日志复制、日志一致性检查、`commitIndex` 和成员变更等完整 Raft 所需的机制。
 
 节点通过 UDP 组播通信，默认组播地址为 `234.56.78.90:9987`。每个节点创建一个临时端口的普通 UDP socket 用于发送，同时创建一个开启地址复用的组播 socket 接收消息；节点之间不维护单独的 peer 地址列表。节点状态包括 `FOLLOWER`、代码中拼写为 `CANDICATE` 的候选者，以及 `LEADER`。心跳超时后，节点增加 term、切换为候选者并通过组播发送投票请求；收到超过 `cluster_size / 2` 的同 term 赞成票后成为 leader，并按 heartbeat interval 周期发送心跳。
 
@@ -45,9 +45,13 @@ flowchart TD
     K -->|否| E
 ```
 
-实现中的选举超时是 `3 * heartbeat_interval`，第一次检查还会增加 `0` 到 `99` 毫秒的随机值，之后的定时周期是固定的。默认 heartbeat interval 为 500 毫秒，而测试用例配置的是 100 毫秒，10个节点同时启动可在500ms内选出一个leader节点。集群总大小来自静态配置的 `cluster_size`，不是通过成员发现动态计算的。
+实现中的选举超时是 `3 * heartbeat_interval`，第一次检查还会增加 `0` 到 `99` 毫秒的随机值，之后的定时周期是固定的。默认 heartbeat interval 为 500 毫秒，而测试用例配置的是 100 毫秒；测试中 10 个节点同时启动可在 500 ms 内选出一个 leader，但这是特定网络和调度条件下的观测结果，不是协议保证。集群总大小来自静态配置的 `cluster_size`，不是通过成员发现动态计算的。
 
-该实现还包含一项自定义的冲突处理：同一 term 下两个节点都认为自己是 leader 时，通过比较 UUID 让较大的 UUID 保留 leader 角色用以加快选举过程。集成节点启动网络事件循环和 `Raft` 后，可以通过 `Raft::GetRole()` 判断自身角色，再决定是否响应服务注册与发现请求。
+该实现还包含一项非标准 Raft 的冲突处理：同一 term 下两个节点都认为自己是 leader 时，通过比较 UUID 让较大的 UUID 保留 leader 角色，以帮助实现尽快收敛。该规则不能替代标准 Raft 对选举和日志安全性的约束。集成节点启动网络事件循环和 `Raft` 后，可以通过 `Raft::GetRole()` 判断自身角色，再决定是否响应服务注册与发现请求。
+
+## 无中心的服务发现
+
+无中心发现不依赖一个逻辑注册中心。各节点通过组播、广播、Gossip，或者访问共同约定的本机文件和共享内存命名空间交换发现信息。DDS 的 SPDP/SEDP 和下文 iceoryx2 的本机资源发现属于这一类。它可以避免注册中心依赖，但每个参与者都要处理成员变化、陈旧资源、并发创建以及信息最终收敛等问题。
 
 ### iceoryx2
 #### 目录结构
@@ -90,7 +94,7 @@ Data<State> {
 * .node_monitor: 原进程持有的文件锁，生命周期和原node一致。只表征node存活状态
 * .node_monitor_context: 存放unique_process_id，统一进程不同node的unique_process_id相同
 * .node_monitor_owner_lock: 清理node资源的文件锁。谁拥有这个文件锁，谁就能清理原进程资源。只表征清理权
-* .dynamic: 文件名由`iceoryx2::service::dynamic_config::DynamicConfig`+`UniqueSystemId`组成。第二个程序通过`.servive`文件查看`UniqueSystemId`，打开`.dynamic`文件，修改`DynamicConfig`数据，添加`nodes`和`messaging_pattern`信息。`service.publisher_builder().create()`时会把port_id加入到`messaging_pattern`对应的`PublishSubscribe`信息中。
+* .dynamic: 文件名由`iceoryx2::service::dynamic_config::DynamicConfig`+`UniqueSystemId`组成。第二个程序通过`.service`文件查看`UniqueSystemId`，打开`.dynamic`文件，修改`DynamicConfig`数据，添加`nodes`和`messaging_pattern`信息。`service.publisher_builder().create()`时会把port_id加入到`messaging_pattern`对应的`PublishSubscribe`信息中。
 ```rust
 pub(crate) enum MessagingPattern {
     RequestResponse(request_response::DynamicConfig),
@@ -103,7 +107,7 @@ pub struct UniqueSystemId {
     seconds: u32,
     nanoseconds: u32,
     counter: u32,
-}s
+}
 pub struct UniqueNodeId(pub(crate) UniqueSystemId);
 pub struct Container<T: Copy + Debug> {
     // must be first member, otherwise the offset calculations fail
@@ -125,9 +129,9 @@ pub struct DynamicConfig {
 
 * .service_tag:以`service_hash(messaging_pattern+service_name)`为文件名, 每个文件都标记node使用过的一个service，供死亡节点清理
 * .service: `create_static_config_storage`创建，存储service相关基本信息
-* .port_tag: 以`UniquePublisherId::new()`命名，标记一个连接。节点挂掉后，通过`prot_tag`文件名的`port_id`删除对应的`.data`文件
+* .port_tag: 以端口的 UniqueId 命名，标记一个端口的生命周期。节点挂掉后，清理方通过 `port_tag` 找到对应端口，并根据端口类型清理 incoming/outgoing connection、数据段、事件资源以及 tag 本身；它不是简单地“一份 tag 对应删除一份 `.data`”。
 * .data: 文件名由 内部类型+`port_id`组成,真正存数据的地方
-* .connect: 文件名由 内部类型+`sender_port_id_receiver_port_id`组成。`service.publisher_builder().create()`或`service.subscriber_builder().create()`时，检索`.dynamic`中的对端列表再执行`create_sender()`或者`create_receiver()`创建`.connect`。`.connect`存放`SharedManagementData`结构体,`channels`中维护发送队列和归还队列，send时发发送队列发offset,sub消费完向归还队列发消息。
+* .connection: 文件名由内部类型+`sender_port_id_receiver_port_id`组成。`service.publisher_builder().create()`或`service.subscriber_builder().create()`时，检索`.dynamic`中的对端列表再执行`create_sender()`或者`create_receiver()`。两端针对同一个确定性名称执行 create-or-open，先到的一方可能完成共享内存初始化，另一方打开并校验已有对象。`.connection`存放`SharedManagementData`结构体，`channels`中维护发送队列和归还队列；send 时向发送队列推送 offset，subscriber 消费完再向归还队列发送回收信息。
 ```rust
 pub struct SharedManagementData {
     channels: RelocatableVec<Channel>,
@@ -161,7 +165,7 @@ graph TB
     S3["数据段/连接/事件资源<br/>实际 payload chunk 和通知资源"]
   end
 
-  subgraph CONN["连接对象（独立命名空间，按 sender_id+receiver_id 命名，由 subscriber 创建）"]
+  subgraph CONN["连接对象（独立命名空间，按 sender_id+receiver_id 命名，由两端 create-or-open）"]
     C1["receive_channel<br/>pub → sub 方向：推送 chunk 偏移量"]
     C2["retrieve_channel<br/>sub → pub 方向：归还已消费的偏移量"]
   end
@@ -196,7 +200,7 @@ graph TB
 
 **连接对象**(独立于 node/service 目录的第三类资源):
 
-- pub/sub 场景下,每一对 (publisher, subscriber) 有独立的连接共享内存,内部紧挨着放 `receive_channel` + `retrieve_channel`,由 **subscriber(receiver)端创建**(因为容量取决于 subscriber 自己的 buffer 配置),按 `sender_id + receiver_id` 算出确定性名字,publisher 通过 `update_connections()` 发现新 subscriber 后去 open 这个已创建好的连接。
+- pub/sub 场景下，每一对 (publisher, subscriber) 有独立的连接共享内存，内部紧挨着放 `receive_channel` + `retrieve_channel`。Publisher 的 `create_sender()` 和 Subscriber 的 `create_receiver()` 都会按 `sender_id + receiver_id` 算出同一个名字并执行 create-or-open：先到的一方负责初始化，另一方打开后校验容量等配置。双方也会在后续 API 活动中通过 `update_connections()` 发现动态加入的对端。
 
 #### Publisher/Subscriber 模式(数据面，零拷贝 + 通知/轮询两种使用方式)
 ```mermaid
@@ -208,7 +212,7 @@ sequenceDiagram
   participant Rt as retrieve_channel<br/>(连接对象, sub→pub)
 
   P->>D: loan() 分配一个 chunk，写入数据
-  P->>Rc: send() 推送 chunk 偏移量（零拷贝，只传地址）
+  P->>Rc: send() 推送 segment_id + chunk offset
   S->>Rc: receive() 弹出偏移量（没有则立即返回 None）
   Rc-->>S: 返回偏移量
   S->>D: 按偏移量直接读数据（无拷贝）
@@ -219,10 +223,14 @@ sequenceDiagram
   P->>D: 对应 chunk 引用计数减一，归零则回收槽位
 ```
 
-- publisher 往自己的数据段共享内存里写数据,把这个 chunk 的**偏移量**推进对应 subscriber 连接里的 `receive_channel`。
-- subscriber 从 `receive_channel` 弹出偏移量,再去数据段里读实际数据;`subscriber.receive()` 是非阻塞的,没有数据立即返回 `None`。如果应用只在 `node.wait()` 后调用 `receive()`，就是周期性轮询；也可以把 Listener/通知 fd attach 到 `WaitSet`，由 epoll/select 等 reactor 唤醒后再排空 receive 队列。
+- publisher 往自己的数据段共享内存里写数据，把这个 chunk 的 **segment_id + offset** 推进对应 subscriber 连接里的 `receive_channel`。跨进程传递的不是虚拟地址，因为同一共享内存在各进程中的映射地址可以不同。
+- subscriber 从 `receive_channel` 弹出偏移量，再去数据段里读实际数据；`subscriber.receive()` 是非阻塞的，没有数据立即返回 `None`。如果应用只在 `node.wait()` 后调用 `receive()`，就是周期性轮询。Publish-subscribe 端口本身不会自动产生 Listener 事件；若要事件驱动，应用需要另建 Event 服务，Publisher 在发送数据后显式调用 Notifier，Subscriber 侧的 Listener/WaitSet 被唤醒后再排空 receive 队列。通知通路与数据通路彼此独立，应用需要自行定义两者的顺序和容错语义。
 - subscriber 用完一个样本(`Sample` 被 drop)后,把这个偏移量推进同一条连接的 `retrieve_channel`。
 - publisher 在需要分配新 chunk 时(`loan`/`send` 内部)顺带处理 `retrieve_channel`:弹出偏移量,把对应 **chunk** 的引用计数减一,归零后这个**槽位**被回收复用——这是常规定长消息下的粒度,不涉及删除整个共享内存文件。
+
+这里的“零拷贝”需要满足边界条件：使用 `loan()` 获得共享内存中的 chunk 并原地构造 payload，才不会先从应用私有内存复制到共享内存；`send_copy()` 仍会执行这一次复制。Payload 还必须是可跨进程解释的自包含数据布局，不能直接包含指向发送进程私有地址空间的普通 `String`、`Vec`、裸指针或引用。对可变长数据，通常需要在 loaned chunk 内使用经过支持的动态类型或序列化布局。
+
+iceoryx2 默认不依靠后台线程持续刷新连接。新端口发现、归还队列处理和新 segment 映射通常由后续 API 调用推进，因此发送端在发送后立即析构、或者在接收端尚未映射新 segment 前销毁相关资源，都可能使尚未建立完整连接的样本无法到达。应用应让端口生命周期覆盖消息实际消费阶段。
 
 #### Notify/Listen 模式(控制面，事件状态 + 可等待通知)
 ```mermaid
@@ -274,6 +282,138 @@ attachment 由 `WaitSetGuard` 持有，guard drop 时自动 detach。WaitSet 还
 #### 可变长消息
 
 - 底层通过 `ResizableSharedMemory` 支持:数据段不是单一固定大小的共享内存,而是由若干个按需追加的 segment(每个有自己的 `SegmentId`)拼成的池子。
-- **绝大多数消息复用现有 segment**,只有当请求的大小超出当前所有 segment 的分配能力时,才会创建一个新的、更大的 segment,后续的大消息改从新 segment 分配。
+- **绝大多数消息复用现有 segment**。当现有 segment 无法满足分配请求时，ResizableSharedMemory 会结合 allocator 的 resize hint 和配置的 `AllocationStrategy` 决定是否创建新的、更大 segment；因此触发条件不只是“单条消息尺寸超过所有 segment”。
 - 旧 segment 在里面所有 chunk 都被回收之前不会被销毁;subscriber 收到指向"没见过的新 segment"的偏移量时,需要先额外 `mmap` 一次这个新 segment 才能读数据。
 - 这套机制有次数上限(`SegmentId` 的取值范围是有限的),适合"消息大小阶段性变化但整体有界"的场景,不适合每条消息大小都剧烈抖动的场景。
+
+### FastDDS
+Fast DDS 的 SHM transport 仍然使用 DDS/RTPS discovery。Participant 通过 SPDP 发布 locator，endpoint 通过 SEDP 发布 locator；接收方据此判断远端 locator 是否可达，并选择 UDP、SHM 等传输。
+
+需要区分两件事：SHM transport 的 locator 是 `LOCATOR_KIND_SHM`，而 Data-sharing 是另一套共享内存数据面机制。抓包中的 UDP locator 只能说明该 discovery 数据发布了 UDP 地址，不能据此推断所有用户数据都经过 UDP；反过来，看到 `/dev/shm/fastdds_*` 也只能证明 SHM transport 创建了资源，是否发送某条 RTPS 消息还要看最终选择的 locator 和 `SharedMemTransport::send()` 路径。
+
+```mermaid
+flowchart LR
+    D[SPDP/SEDP discovery] --> L[远端 locator]
+    L --> S{选择传输}
+    S --> U[UDP socket]
+    S --> H[SHM port]
+    H --> P[fastdds_port<port>]
+    H --> M[fastdds_<segment_id>]
+```
+
+#### Locator 和传输选择
+
+`SharedMemTransportDescriptor::create_transport()` 创建 `SharedMemTransport`。SHM locator 由 `SHMLocator::create_locator()` 生成：
+![Local image](data/posts/img/fastdds_shm1.png)
+```text
+Locator.kind    = LOCATOR_KIND_SHM
+Locator.port    = SHM port 编号
+Locator.address = 本机 host id 和 locator 类型信息
+```
+
+SPDP 中的 `PID_DEFAULT_UNICAST_LOCATOR` 和 SEDP 中的 endpoint locator 都是 discovery 元数据，不是实际的共享内存文件名。`SharedMemTransport::transform_remote_locator()` 只接受已经是 `LOCATOR_KIND_SHM` 的 locator，不会把 UDP locator 转换成 SHM locator。
+
+当 locator 选择结果中包含 SHM locator 时，发送路径大致如下：
+
+```text
+SharedMemTransport::send()
+  -> copy_to_shared_buffer()
+  -> shared_mem_segment_->alloc_buffer(total_bytes, ...)
+  -> memcpy(RTPS message, buffer)
+  -> find_port(remote_locator.port)
+  -> port->try_push(BufferDescriptor)
+```
+
+#### Payload segment：`fastdds_<segment_id>`
+`/dev/shm/fastdds_32cc0a6c8f6f1cf1`的命名规则是：`<domain_name>_<segment_id>`。内置 domain name 是 `fastdds`，`segment_id` 是随机生成的 8 字节 ID，以 16 个十六进制字符显示。每个已初始化的 `SharedMemTransport` 创建自己的发送 segment；默认 Participant 配置通常只有一个 SHM transport，所以观察上经常表现为“每个 Participant 一个 segment”，但两者不是语义上的严格一一对应。复用同一个 transport 的多个 topic 和 endpoint 可以共用这个 segment。`fastdds_<segment_id>`文件中存放`SharedMemManager::BufferNode`以及动态分配的 RTPS payload。
+```C++
+    struct BufferNode
+    {
+        struct Status
+        {
+            uint64_t validity_id : 24;
+            uint64_t enqueued_count : 20;
+            uint64_t processing_count : 20;
+        };
+
+        std::atomic<Status> status;
+        uint32_t data_size;
+        SharedMemSegment::Offset data_offset;
+    }
+```
+
+SHM transport发送一条 RTPS 消息时，根据序列化后的实际字节数动态分配 buffer,然后填充一条`BufferNode` 记录：
+```text
+shared_mem_segment_->alloc_buffer(total_bytes, ...);
+    ->segment_->get().allocate(size);
+
+对应的 `BufferNode` 记录：
+data_offset  -> payload 在 segment 中的偏移
+data_size    -> payload 大小
+status       -> validity/enqueued/processing 计数
+```
+
+segment 总大小在 transport 初始化时固定，不会因为单条消息变大而自动扩容。分配失败时，Fast DDS 会先尝试回收不再引用或没有 listener 正在处理的旧 buffer；仍然不足则报告 allocation overflow。配置上，segment 至少应能容纳最大单次 RTPS transport message，并且还要为同时存活的其他消息预留空间。
+
+#### Port segment：`fastdds_port<port>`
+`/dev/shm/fastdds_port7411` 的命名规则是：`<domain_name>_port<port_id>`。它不保存完整 RTPS payload，而是保存跨进程的描述符队列和同步状态。核心类型包括：
+```cpp
+SharedMemGlobal::PortNode 
+SharedMemGlobal::BufferDescriptor
+MultiProducerConsumerRingBuffer<BufferDescriptor>
+```
+
+`PortNode` 包含 port 状态、监听者数量、`ListenerStatus[1024]`、条件变量、互斥量和 domain name。环形队列中的 `BufferDescriptor` 告诉接收进程应该打开哪个 `fastdds_<segment_id>`，并在其中按哪个 offset 找到 `BufferNode` 和 payload，因此实际数据面是：
+```text
+发送进程：payload 写入 fastdds_<segment_id>
+发送进程：BufferDescriptor 写入 fastdds_port<port_id>
+接收进程：从 port 读取 descriptor
+接收进程：open_only(fastdds_<segment_id>)
+接收进程：按 offset 读取 payload
+```
+
+#### `_el` 文件和 `sem.*` 对象
+`fastdds_<segment_id>_el` 是 segment 所有权/存活性使用的 robust exclusive lock。Port 的 `_el` 表示独占 reader lock，`_sl` 则用于 shared reader lock；判断资源是否为 zombie 不能只看锁文件是否存在，还要尝试获取锁并判断它是否仍被活跃进程持有。
+
+`sem.*` 是 `RobustInterprocessCondition` 为跨进程条件等待建立的 semaphore 对象，用于阻塞和唤醒 listener，并不负责保证“同一时刻只有一个进程访问整个 segment 或 port”。多个进程本来就可以同时映射 payload segment；PortNode 中的 mutex、原子状态和 `MultiProducerConsumerRingBuffer` 协议共同负责并发协调。当前实现中 Port 自己维护 `ListenerStatus[1024]`，而 `RobustInterprocessCondition` 内部 semaphore pool 的上限是另一个实现常量，不能把两者视为同一个数组。
+
+#### Data-sharing：直接共享 Writer History
+
+Data-sharing 与 SHM Transport 是两条不同的数据路径。SHM Transport 仍然传送完整的 RTPS message：发送方把序列化后的 RTPS 字节复制到 `fastdds_<segment_id>`，再把 `BufferDescriptor` 推入远端 Port。Data-sharing 则跳过本机 Reader/Writer 之间的 RTPS transport 数据传输，让 Reader 直接映射 Writer 的共享 history。
+
+```mermaid
+flowchart LR
+    A[DataWriter 写入样本] --> B[WriterPool / PayloadNode]
+    B --> C[Writer 共享 segment]
+    B --> D[共享 history 中写入 PayloadNode offset]
+    D --> E[DataSharingNotifier 通知对应 Reader]
+    E --> F[DataSharingListener 唤醒]
+    F --> G[ReaderPool 映射 Writer segment]
+    G --> H[DataReader 读取同一 PayloadNode]
+```
+
+每个启用 Data-sharing 的 Writer 创建一块以 Writer GUID 命名的共享 segment。segment 中主要包含：
+
+- 预分配的 `PayloadNode` 池，每个节点保存样本元数据和序列化 payload；
+- 一个保存 `PayloadNode` offset 的共享 history 环形区域；
+- `PoolDescriptor`，维护 history 的 begin/end 和 liveliness 状态。
+
+Reader 匹配到兼容 Writer 后，以只读角色打开该 Writer 的 segment，并用 `ReaderPool` 将共享内存中的 offset 转为本进程可访问的地址。每个 Reader 还创建自己的 `fast_datasharing_<reader_guid>` 通知 segment，里面包含 condition variable、mutex 和 `new_data` 标志；Writer 的 `DataSharingNotifier` 打开该通知对象，Writer history 出现新数据时唤醒 Reader 的 `DataSharingListener`。通知只表示“可能有新数据”，实际样本顺序和可见范围仍由 Writer 的共享 history 决定。
+
+##### Data-sharing 是否等于端到端零拷贝
+
+Data-sharing 避免了 Writer 到本机 Reader 之间的 transport copy，但是否达到应用到应用的零拷贝，还取决于 API 和类型：
+
+- 普通 `DataWriter::write()` 通常仍需把用户对象序列化到 WriterPool 的共享 payload；
+- 对满足 loan 要求的 plain/bounded 类型，Writer 使用 `loan_sample()` 直接在共享 payload 中构造数据，Reader 再通过 loaned sample 读取，可以避免应用层的额外复制；
+- 非 plain 类型在 Reader 侧可能仍需反序列化为用户对象，因此“使用 Data-sharing”不能直接等价为“必然零拷贝”。
+
+Data-sharing 只有在双方 QoS 和实现约束兼容时才启用。当前 Writer 侧的主要限制包括：类型必须 bounded、不能是 keyed type、history memory policy 必须是 `PREALLOCATED_MEMORY_MODE` 或 `PREALLOCATED_WITH_REALLOC_MEMORY_MODE`，不能使用自定义 payload pool，也不能与启用的安全保护组合使用。Writer 和 Reader 的 Data-sharing domain ID 还必须存在交集。
+
+`DataSharingQosPolicy` 的三种模式语义不同：
+
+- `AUTO`：条件满足时使用 Data-sharing，否则仍可使用普通 transport；
+- `ON`：要求本地 endpoint 按 Data-sharing 的约束创建；本地类型、memory policy 或安全配置不兼容时创建失败。某个远端 Writer/Reader 是否实际走 Data-sharing，仍取决于双方 domain ID 等匹配条件；
+- `OFF`：禁用 Data-sharing。
+
+因此，判断 Fast DDS 本机通信的真实数据路径时，需要同时检查 transport locator、Data-sharing QoS、类型与 memory policy，以及 Writer/Reader 是否最终建立了 Data-sharing 匹配。仅查看 UDP 抓包或 `/dev/shm/fastdds_*` 文件都不足以单独下结论。
