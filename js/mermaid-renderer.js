@@ -4,12 +4,16 @@
 class MermaidRenderer {
     constructor() {
         this.mermaidLoaded = false;
-        this.loadMermaid();
+        this.mermaidLoadPromise = this.loadMermaid();
     }
     
     async loadMermaid() {
         try {
             // Try to load Mermaid from CDN
+            const mermaidLoaded = new Promise((resolve, reject) => {
+                window.addEventListener('mermaid-loaded', resolve, { once: true });
+                setTimeout(() => reject(new Error('Mermaid load timeout')), 5000);
+            });
             const script = document.createElement('script');
             script.type = 'module';
             script.textContent = `
@@ -19,12 +23,7 @@ class MermaidRenderer {
                 window.dispatchEvent(new Event('mermaid-loaded'));
             `;
             document.head.appendChild(script);
-            
-            // Wait for mermaid to load
-            await new Promise((resolve, reject) => {
-                window.addEventListener('mermaid-loaded', resolve);
-                setTimeout(() => reject(new Error('Mermaid load timeout')), 5000);
-            });
+            await mermaidLoaded;
             
             this.mermaidLoaded = true;
         } catch (error) {
@@ -50,27 +49,48 @@ class MermaidRenderer {
             }
         });
         
-        // Wait a bit for mermaid to load
-        for (let i = 0; i < 10 && !window.mermaid; i++) {
-            await new Promise(resolve => setTimeout(resolve, 200));
+        try {
+            await this.mermaidLoadPromise;
+        } catch (error) {
+            this.renderFallback();
+            return;
         }
-        
+
         if (window.mermaid) {
-            try {
-                await window.mermaid.run({
-                    querySelector: '.mermaid'
-                });
-            } catch (error) {
-                console.error('Error rendering mermaid diagrams:', error);
-                this.renderFallback();
+            for (const [index, container] of mermaidContainers.entries()) {
+                const mermaidDiv = container.querySelector('.mermaid');
+                if (!mermaidDiv) {
+                    continue;
+                }
+
+                try {
+                    const code = mermaidDiv.textContent;
+                    let result;
+                    try {
+                        result = await window.mermaid.render(
+                            `mermaid-diagram-${Date.now()}-${index}`,
+                            code
+                        );
+                    } catch (error) {
+                        result = await window.mermaid.render(`mermaid-diagram-retry-${index}`, code);
+                    }
+                    const { svg, bindFunctions } = result;
+                    mermaidDiv.innerHTML = svg;
+                    bindFunctions?.(mermaidDiv);
+                } catch (error) {
+                    console.error('Error rendering mermaid diagram:', error);
+                    this.renderFallback(container);
+                }
             }
         } else {
             this.renderFallback();
         }
     }
     
-    renderFallback() {
-        const mermaidContainers = document.querySelectorAll('.mermaid-container');
+    renderFallback(container) {
+        const mermaidContainers = container
+            ? [container]
+            : document.querySelectorAll('.mermaid-container');
         mermaidContainers.forEach(container => {
             const code = container.querySelector('.mermaid').textContent;
             container.innerHTML = `
