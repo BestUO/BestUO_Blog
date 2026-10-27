@@ -1,5 +1,15 @@
 [
     {
+        "id": 37,
+        "title": "性能分析2",
+        "author": "Thomas Chen",
+        "date": "2026-10-27",
+        "category": "debug",
+        "excerpt": "linux性能分析工具与方法",
+        "contentFile": "data/posts/debug/performance2.md",
+        "imageUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop"
+    },
+    {
         "id": 36,
         "title": "分布式通信中间件",
         "author": "Thomas Chen",

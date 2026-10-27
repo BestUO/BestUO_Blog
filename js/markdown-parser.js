@@ -217,6 +217,31 @@ class MarkdownParser {
         
         return result.join('\n');
     }
+
+    parseBlockquotes(text) {
+        const lines = text.split('\n');
+        const result = [];
+        let i = 0;
+
+        while (i < lines.length) {
+            if (!/^>\s?/.test(lines[i])) {
+                result.push(lines[i]);
+                i++;
+                continue;
+            }
+
+            const quoteLines = [];
+            while (i < lines.length && /^>\s?/.test(lines[i])) {
+                quoteLines.push(lines[i].replace(/^>\s?/, ''));
+                i++;
+            }
+
+            const quoteText = quoteLines.join('\n').trim();
+            result.push(`<blockquote><p>${this.parseInline(quoteText).replace(/\n/g, '<br>')}</p></blockquote>`);
+        }
+
+        return result.join('\n');
+    }
     
     getIndentLevel(indent) {
         // Count indent level: each tab = 1 level, 2 spaces = 1 level
@@ -293,8 +318,66 @@ class MarkdownParser {
     resetHeadingIds() {
         this.headingIds = new Map();
     }
+
+    buildTOC(headings) {
+        if (headings.length === 0) {
+            return '';
+        }
+
+        let tocHtml = '<div class="toc-container">\n<nav class="toc">\n<h4 class="toc-title">目录</h4>\n<ul class="toc-list">\n';
+        headings.forEach(heading => {
+            const indentClass = heading.depth > 1 ? ` toc-level-${heading.depth}` : '';
+            tocHtml += `<li class="toc-entry${indentClass}" data-level="${heading.depth}"><a href="#${heading.slug}">${this.escapeHtml(heading.text)}</a></li>\n`;
+        });
+        return `${tocHtml}</ul>\n</nav>\n</div>`;
+    }
     
     parse(markdown) {
+        if (window.marked) {
+            this.resetHeadingIds();
+            const tocMarker = 'MDPARSETOCPLACEHOLDER';
+            const hasToc = /^\[TOC\]\s*$/im.test(markdown);
+            const markdownWithToc = hasToc
+                ? markdown.replace(/^\[TOC\]\s*$/im, tocMarker)
+                : markdown;
+            const renderer = new window.marked.Renderer();
+            const tocEntries = [];
+
+            renderer.heading = ({ tokens, depth }) => {
+                const text = window.marked.Parser.parseInline(tokens);
+                const plainText = text.replace(/<[^>]+>/g, '');
+                const slug = this.generateSlug(plainText);
+                if (depth <= 3) {
+                    tocEntries.push({ level: depth, text, slug });
+                }
+                return `<h${depth} id="${this.escapeHtml(slug)}">${text}</h${depth}>\n`;
+            };
+
+            let parsedHtml = window.marked.parse(markdownWithToc, {
+                gfm: true,
+                breaks: false,
+                renderer
+            });
+
+            if (hasToc) {
+                const tocHtml = this.buildTOC(tocEntries.map(entry => ({
+                    depth: entry.level,
+                    slug: entry.slug,
+                    text: entry.text.replace(/<[^>]+>/g, '')
+                })));
+                parsedHtml = parsedHtml.replace(`<p>${tocMarker}</p>\n`, tocHtml);
+            }
+
+            parsedHtml = parsedHtml.replace(
+                /<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+                '<div class="mermaid-container"><div class="mermaid"><pre>$1</pre></div></div>'
+            );
+
+            return window.DOMPurify
+                ? window.DOMPurify.sanitize(parsedHtml)
+                : parsedHtml;
+        }
+
         let html = markdown;
         
         // Reset heading IDs for TOC generation
@@ -330,8 +413,14 @@ class MarkdownParser {
             return this.parseTable(match, headers, rows);
         });
         
+        // Parse block quotes before list and paragraph processing
+        html = this.parseBlockquotes(html);
+
         // Parse nested lists (both ordered and unordered with hierarchy support)
         html = this.parseNestedList(html);
+
+        // Horizontal rules are block-level elements
+        html = html.replace(/^ {0,3}([-*_])(?:\s*\1){2,}\s*$/gm, '<hr>');
         
         // Headers with ID for anchor links (must be on their own line)
         html = html.replace(/^(#{1,4})\s+(.+)$/gm, (match, hashes, text) => {
@@ -374,8 +463,9 @@ class MarkdownParser {
             block = block.trim();
             if (block === '') return '';
             
-            // Don't wrap if already has HTML tags (including nav for TOC)
-            if (block.match(/^<(h[1-6]|ul|ol|table|pre|div|nav)/)) {
+            // Don't wrap block elements or standalone code placeholders
+            if (block.match(/^<(h[1-6]|ul|ol|table|pre|blockquote|div|nav|hr)/) ||
+                block.startsWith(this.codeBlockPrefix)) {
                 return block;
             }
             

@@ -109,6 +109,16 @@ async function displayPost() {
             ${content}
         </div>
     `;
+
+    document.querySelectorAll('#postDetail .content pre code').forEach(codeBlock => {
+        if (codeBlock.closest('.mermaid')) {
+            return;
+        }
+
+        if (window.hljs) {
+            window.hljs.highlightElement(codeBlock);
+        }
+    });
     
     // Render mermaid diagrams if any
     await renderMermaidDiagrams();
